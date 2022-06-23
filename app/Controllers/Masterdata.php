@@ -199,6 +199,73 @@ class Masterdata extends BaseController
     {
         $id = $this->request->getVar('id');
         $keterangan = $this->request->getVar('keterangan');
+        // print_r($id);exit;
+
+        $data = [
+            'keterangan' => $keterangan
+        ];
+
+        $this->db->table('tb_kategori')
+        ->where('id', $id)
+        ->update($data);
+
+        return redirect()->to('/user/dashboard/masterdata/kategori');
+    }
+
+    /** product */
+    public function product()
+    {
+        $model = new DataKelolaAdminModel;
+        $currentPage = $this->request->getVar('page_produk') ? $this->request->getVar('page_produk') : 1;
+        // $product = $this->db->table('tb_product')->get()->getResult();
+        $product = $this->db->query("select a.*, b.keterangan as kategori from tb_product a join tb_kategori b on a.id_kategori = b.id")->getResult();
+        $kategori = $this->db->table('tb_kategori')->get()->getResult();
+        $data = [
+            'model' => $model,
+            'dataTransaksi' => $model->get(),
+            'all_data' => $model->getDataTransaksi(),
+            'totalPembelian' => $model->getTotalPembelian(),
+            'namaAdmin' => $model->getNamaAdmin(),
+            'tanggalPembelian' => $model->getTanggalPembelian(),
+            'totalHistoryPembayaran' => $model->getTotalHistoryPembayaran(),
+            'title' => 'Home',
+            'tampil' => 'masterdata/product/index',
+            'pager' => $model->pager,
+            'currentPage' => $currentPage,
+            'dataStockBahan' => $this->StockModel->getDataStockBahan(),
+            'dataJenisService' => $this->JenisServiceModel->get(),
+            'dataJenisTransaksiLainnya' => $this->JenisTransaksiLainnyaModel->get(),
+            'dataJenisBeban' => $this->JenisBebanModel->getDataJenisBeban(),
+            'product' => $product,
+            'kategori' => $kategori,
+        ];
+        return view('wrapp', $data);
+    }
+
+    public function productSave()
+    {
+        $id_product = $this->request->getVar('id_product');
+        $nama_product = $this->request->getVar('nama_product');
+        $kategori = $this->request->getVar('kategori');
+        $stok_akhir = $this->request->getVar('stok_akhir');
+        $min_stok = $this->request->getVar('min_stok');
+        $data = [
+            'id_product' => $id_product,
+            'nama_product' => $nama_product,
+            'id_kategori' => $kategori,
+            'stok_akhir' => $stok_akhir,
+            'min_stok' => $min_stok,
+        ];
+        $this->db->table('tb_product')
+        ->insert($data);
+
+        return redirect()->to('/user/dashboard/masterdata/product');
+    }
+
+    public function productEdit()
+    {
+        $id = $this->request->getVar('id');
+        $keterangan = $this->request->getVar('keterangan');
 
         $data = [
             'keterangan' => $keterangan

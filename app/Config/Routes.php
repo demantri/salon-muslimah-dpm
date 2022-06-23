@@ -53,9 +53,9 @@ $routes->group('/user/dashboard/masterdata', static function($routes) {
     $routes->post('kategori/edit', 'Masterdata::kategoriEdit', ['filter' => 'role:pemilik, admin2']);
 
     /** kategori */
-    // $routes->get('kategori', 'Masterdata::kategori', ['filter' => 'role:pemilik, admin2']);
-    // $routes->post('kategori/save', 'Masterdata::kategoriSave', ['filter' => 'role:pemilik, admin2']);
-    // $routes->post('kategori/edit', 'Masterdata::kategoriEdit', ['filter' => 'role:pemilik, admin2']);
+    $routes->get('product', 'Masterdata::product', ['filter' => 'role:pemilik, admin2']);
+    $routes->post('product/save', 'Masterdata::productSave', ['filter' => 'role:pemilik, admin2']);
+    $routes->post('product/edit', 'Masterdata::productEdit', ['filter' => 'role:pemilik, admin2']);
 });
 
 // Product

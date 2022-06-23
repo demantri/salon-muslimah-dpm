@@ -68,7 +68,8 @@
                                 <a href="#" class="nav-link has-dropdown text-white" data-toggle="dropdown" style="background-color: #6e60a3;"><i class="fas fa-concierge-bell"></i> <span>Transaksi</span></a>
                                 <ul class="dropdown-menu" style="background-color: #6e60a3;">
                                     <li><a class="nav-link text-white" href="/user/dashboard/service" style="background-color: #6e60a3;">Service</a></li>
-                                    <li><a class="nav-link text-white" href="/user/dashboard/product" style="background-color: #6e60a3;">Pembelian Product</a></li>
+                                    <li><a class="nav-link text-white" href="/user/dashboard/product" style="background-color: #6e60a3;">Penjualan Product</a></li>
+                                    <li><a class="nav-link text-white" href="/user/dashboard/product" style="background-color: #6e60a3;">Pembelian Bahan</a></li>
                                 </ul>
 
                                 <ul class="dropdown-menu" style="background-color: #6e60a3;">
@@ -83,11 +84,11 @@
                                                 <a class="dropdown-item text-white" href="/user/dashboard/pencatatan-kas/pengeluaran/gaji" style="background-color: #6e60a3;">Gaji</a>
                                                 <a class="dropdown-item text-white" href="/user/dashboard/pencatatan-kas/pengeluaran/beban" style="background-color: #6e60a3;">Beban</a>
                                                 <a class="dropdown-item text-white" href="/user/dashboard/pencatatan-kas/pengeluaran/aset" style="background-color: #6e60a3;">Aset</a>
-                                                <a class="dropdown-item text-white" href="/user/dashboard/pencatatan-kas/pengeluaran/bahan" style="background-color: #6e60a3;">Bahan</a>
+                                                <!-- <a class="dropdown-item text-white" href="/user/dashboard/pencatatan-kas/pengeluaran/bahan" style="background-color: #6e60a3;">Bahan</a> -->
                                                 <a class="dropdown-item text-white" href="/user/dashboard/pencatatan-kas/pengeluaran/lainnya" style="background-color: #6e60a3;">Transaksi Lainnya</a>
                                             </div>
                                         </div>
-                                        <div class="nav-item dropdown">
+                                        <!-- <div class="nav-item dropdown">
                                             <a class="text-white dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-expanded="false" style="background-color: #6e60a3;">
                                                 Pemasukkan
                                             </a>
@@ -95,8 +96,9 @@
                                             <div class="dropdown-menu" aria-labelledby="dropdownMenuLink" style="background-color: #6e60a3;">
                                                 <a class="dropdown-item text-white" href="/user/dashboard/pencatatan-kas/pemasukan/produk" style="background-color: #6e60a3;">Product</a>
                                                 <a class="dropdown-item text-white" href="/user/dashboard/pencatatan-kas/pemasukan/service" style="background-color: #6e60a3;">Service</a>
+                                                <a class="dropdown-item text-white" href="/user/dashboard/pencatatan-kas/pemasukan/penjualan-product" style="background-color: #6e60a3;">Penjualan Product</a>
                                             </div>
-                                        </div>
+                                        </div> -->
                                     </li>
                                 </ul>
                             </li>

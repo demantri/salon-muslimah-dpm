@@ -1,4 +1,4 @@
-<div class="modal fade" id="add" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="edit" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -7,9 +7,9 @@
                 <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form action="/user/dashboard/masterdata/kategori/save" method="post">
-                <input type="hidden" name="id" id="id">
+            <form action="/user/dashboard/masterdata/kategori/edit" method="post">
                 <div class="modal-body">
+                    <input type="hidden" name="id" id="id">
                     <div class="form-group row">
                         <label for="keterangan" class="col-sm-3 col-form-label">Keterangan</label>
                         <div class="col-sm-9">
