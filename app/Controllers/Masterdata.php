@@ -249,10 +249,12 @@ class Masterdata extends BaseController
         $kategori = $this->request->getVar('kategori');
         $stok_akhir = $this->request->getVar('stok_akhir');
         $min_stok = $this->request->getVar('min_stok');
+        $harga_satuan = $this->request->getVar('harga_satuan');
         $data = [
             'id_product' => $id_product,
             'nama_product' => $nama_product,
             'id_kategori' => $kategori,
+            'harga_satuan' => $harga_satuan,
             'stok_akhir' => $stok_akhir,
             'min_stok' => $min_stok,
         ];

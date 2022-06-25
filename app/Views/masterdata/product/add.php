@@ -22,6 +22,12 @@
                         </div>
                     </div>
                     <div class="form-group row">
+                        <label for="harga_satuan" class="col-sm-3 col-form-label">Harga Satuan</label>
+                        <div class="col-sm-9">
+                            <input type="number" class="form-control" id="harga_satuan" name="harga_satuan" placeholder="Harga Satuan" required>
+                        </div>
+                    </div>
+                    <div class="form-group row">
                         <label for="kategori" class="col-sm-3 col-form-label">Ketegori</label>
                         <div class="col-sm-9">
                             <select name="kategori" id="kategori" class="form-control">

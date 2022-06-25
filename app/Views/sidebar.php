@@ -68,7 +68,8 @@
                                 <a href="#" class="nav-link has-dropdown text-white" data-toggle="dropdown" style="background-color: #6e60a3;"><i class="fas fa-concierge-bell"></i> <span>Transaksi</span></a>
                                 <ul class="dropdown-menu" style="background-color: #6e60a3;">
                                     <li><a class="nav-link text-white" href="/user/dashboard/service" style="background-color: #6e60a3;">Service</a></li>
-                                    <li><a class="nav-link text-white" href="/user/dashboard/product" style="background-color: #6e60a3;">Penjualan Product</a></li>
+                                    <!-- <li><a class="nav-link text-white" href="/user/dashboard/product" style="background-color: #6e60a3;">Penjualan Product</a></li> -->
+                                    <li><a class="nav-link text-white" href="/user/transaksi/penjualan" style="background-color: #6e60a3;">Penjualan Product</a></li>
                                     <li><a class="nav-link text-white" href="/user/dashboard/product" style="background-color: #6e60a3;">Pembelian Bahan</a></li>
                                 </ul>
 

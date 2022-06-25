@@ -58,6 +58,14 @@ $routes->group('/user/dashboard/masterdata', static function($routes) {
     $routes->post('product/edit', 'Masterdata::productEdit', ['filter' => 'role:pemilik, admin2']);
 });
 
+/** routes transaksi */
+$routes->group('/user/transaksi', static function($routes) {
+    $routes->get('penjualan', 'Transaksi::penjualan', ['filter' => 'role:pemilik, admin2']);
+    $routes->get('penjualan/form', 'Transaksi::form_penjualan', ['filter' => 'role:pemilik, admin2']);
+    $routes->post('penjualan/detail_penjualan', 'Transaksi::detail_penjualan', ['filter' => 'role:pemilik, admin2']);
+    $routes->get('penjualan/save', 'Transaksi::save_penjualan', ['filter' => 'role:pemilik, admin2']);
+});
+
 // Product
 $routes->get('/user/dashboard/product', 'Product::index', ['filter' => 'role:pemilik,admin2']);
 $routes->get('/user/dashboard/product/offline-shipping', 'Product::index', ['filter' => 'role:pemilik,admin2']);
