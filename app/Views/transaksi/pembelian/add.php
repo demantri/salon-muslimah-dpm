@@ -8,13 +8,13 @@
     <section class="section" style="background-color: white; padding: 2rem; box-shadow: 1px 2px 3px 1px rgba(0,0,0,0.75); border-radius: 15px;">
         <div class="row">
             <div class="col-lg-10">
-                <h4>Transaksi Penjualan Product</h4>
+                <h4>Transaksi Pembelian Bahan</h4>
             </div>
         </div>
         <hr>
         <div class="row">
             <div class="col-sm-6">
-                <form method="post" action="<?= base_url('user/transaksi/penjualan/detail_penjualan') ?>">
+                <form method="post" action="<?= base_url('user/transaksi/pembelian/detail_pembelian') ?>">
                     <div class="form-group row">
                         <label for="id_transaksi" class="col-sm-4 col-form-label">ID Transaksi</label>
                         <div class="col-sm-8">
@@ -28,7 +28,7 @@
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="product" class="col-sm-4 col-form-label">Product</label>
+                        <label for="product" class="col-sm-4 col-form-label">Bahan</label>
                         <div class="col-sm-8">
                             <select name="product" id="product" class="form-control" name="product" required>
                                 <option value="">-</option>
@@ -48,7 +48,7 @@
                     <div class="form-group row">
                         <label for="" class="col-sm-4 col-form-label"></label>
                         <div class="col-sm-8">
-                        <a href="<?= base_url('user/transaksi/penjualan') ?>" class="btn btn-secondary"> Kembali</a>
+                        <a href="<?= base_url('user/transaksi/pembelian') ?>" class="btn btn-secondary"> Kembali</a>
                         <button type="submit" class="btn btn-primary"> Tambah</button>
                         </div>
                     </div>
@@ -61,7 +61,7 @@
                             <thead>
                                 <tr>
                                     <th class="text-center">#</th>
-                                    <th class="text-center">Nama Product</th>
+                                    <th class="text-center">Nama Bahan</th>
                                     <th class="text-center">Qty</th>
                                     <th class="text-center">Harga Satuan</th>
                                     <th class="text-center">Total</th>
@@ -113,7 +113,7 @@
         </div>
     </section>
 </div>
-<?= $this->include('transaksi/penjualan/bayar');?>
+<?= $this->include('transaksi/pembelian/bayar');?>
 <script src="<?= base_url('/js/vanilla-tilt.js'); ?>"></script>
 <script type="text/javascript">
     VanillaTilt.init(document.querySelectorAll(".info_card"), {
@@ -149,7 +149,7 @@
         });
     });
 
-    $(document).on("change", "#nama_pelanggan", function() {
+    $(document).on("keyup", "#supplier", function() {
         var value = $(this).val();
         $("#kembalian").val(0);
         if (value) {

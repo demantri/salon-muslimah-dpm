@@ -11,6 +11,7 @@ use App\Models\JenisServiceModel;
 use App\Controllers\BaseController;
 use App\Models\DataKelolaAdminModel;
 use App\Models\JenisTransaksiLainnyaModel;
+use App\Models\KodeOtomatis;
 
 class Masterdata extends BaseController
 {
@@ -137,6 +138,83 @@ class Masterdata extends BaseController
     }
 
     public function pelangganEdit()
+    {
+        $id_pelanggan = $this->request->getVar('id_pelanggan');
+        $nama_pelanggan = $this->request->getVar('nama_pelanggan');
+        $alamat_domisili = $this->request->getVar('alamat_domisili');
+        $no_telp = $this->request->getVar('no_telp');
+
+        $data = [
+            'nama' => $nama_pelanggan,
+            'alamat' => $alamat_domisili,
+            'no_telp' => $no_telp,
+        ];
+
+        $this->db->table('tb_pelanggan')
+        ->where('id_pelanggan', $id_pelanggan)
+        ->update($data);
+
+        return redirect()->to('/user/dashboard/masterdata/pelanggan');
+    }
+
+    /** aset */
+    public function aset()
+    {
+        $model = new DataKelolaAdminModel;
+        $currentPage = $this->request->getVar('page_produk') ? $this->request->getVar('page_produk') : 1;
+        $aset = $this->db->table('tb_aset')->get()->getResult();
+        $satuan = $this->db->table('tb_satuan')->get()->getResult();
+
+        $kode = new KodeOtomatis();
+        $id_aset  = $kode->id_aset();
+
+        $data = [
+            'model' => $model,
+            'dataTransaksi' => $model->get(),
+            'all_data' => $model->getDataTransaksi(),
+            'totalPembelian' => $model->getTotalPembelian(),
+            'namaAdmin' => $model->getNamaAdmin(),
+            'tanggalPembelian' => $model->getTanggalPembelian(),
+            'totalHistoryPembayaran' => $model->getTotalHistoryPembayaran(),
+            'title' => 'Home',
+            'tampil' => 'masterdata/aset/index',
+            'pager' => $model->pager,
+            'currentPage' => $currentPage,
+            'dataStockBahan' => $this->StockModel->getDataStockBahan(),
+            'dataJenisService' => $this->JenisServiceModel->get(),
+            'dataJenisTransaksiLainnya' => $this->JenisTransaksiLainnyaModel->get(),
+            'dataJenisBeban' => $this->JenisBebanModel->getDataJenisBeban(),
+            'aset' => $aset,
+            'satuan' => $satuan,
+            'id_aset' => $id_aset
+        ];
+        return view('wrapp', $data);
+    }
+
+    public function asetSave()
+    {
+        $id_aset = $this->request->getVar('id_aset');
+        $nama_aset = $this->request->getVar('nama_aset');
+        $harga_aset = $this->request->getVar('harga_aset');
+        $satuan = $this->request->getVar('satuan');
+        $jenis_aset = $this->request->getVar('jenis_aset');
+
+        $data = [
+            'id_aset' => $id_aset,
+            'nama' => $nama_aset,
+            'jenis_aset' => $jenis_aset,
+            'harga' => $harga_aset,
+            'satuan' => $satuan,
+        ];
+        // print_r($data);exit;
+
+        $this->db->table('tb_aset')
+        ->insert($data);
+
+        return redirect()->to('/user/dashboard/masterdata/aset');
+    }
+
+    public function asetEdit()
     {
         $id_pelanggan = $this->request->getVar('id_pelanggan');
         $nama_pelanggan = $this->request->getVar('nama_pelanggan');

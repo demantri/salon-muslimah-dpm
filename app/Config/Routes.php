@@ -52,10 +52,15 @@ $routes->group('/user/dashboard/masterdata', static function($routes) {
     $routes->post('kategori/save', 'Masterdata::kategoriSave', ['filter' => 'role:pemilik, admin2']);
     $routes->post('kategori/edit', 'Masterdata::kategoriEdit', ['filter' => 'role:pemilik, admin2']);
 
-    /** kategori */
+    /** product */
     $routes->get('product', 'Masterdata::product', ['filter' => 'role:pemilik, admin2']);
     $routes->post('product/save', 'Masterdata::productSave', ['filter' => 'role:pemilik, admin2']);
     $routes->post('product/edit', 'Masterdata::productEdit', ['filter' => 'role:pemilik, admin2']);
+
+    /** aset */
+    $routes->get('aset', 'Masterdata::aset', ['filter' => 'role:pemilik, admin2']);
+    $routes->post('aset/save', 'Masterdata::asetSave', ['filter' => 'role:pemilik, admin2']);
+    $routes->post('aset/edit', 'Masterdata::asetEdit', ['filter' => 'role:pemilik, admin2']);
 });
 
 /** routes transaksi */
@@ -64,6 +69,16 @@ $routes->group('/user/transaksi', static function($routes) {
     $routes->get('penjualan/form', 'Transaksi::form_penjualan', ['filter' => 'role:pemilik, admin2']);
     $routes->post('penjualan/detail_penjualan', 'Transaksi::detail_penjualan', ['filter' => 'role:pemilik, admin2']);
     $routes->get('penjualan/save', 'Transaksi::save_penjualan', ['filter' => 'role:pemilik, admin2']);
+
+    $routes->get('pembelian', 'Transaksi::pembelian', ['filter' => 'role:pemilik, admin2']);
+    $routes->get('pembelian/form', 'Transaksi::form_pembelian', ['filter' => 'role:pemilik, admin2']);
+    $routes->post('pembelian/detail_pembelian', 'Transaksi::detail_pembelian', ['filter' => 'role:pemilik, admin2']);
+    $routes->get('pembelian/save', 'Transaksi::save_pembelian', ['filter' => 'role:pemilik, admin2']);
+
+    $routes->get('service', 'Transaksi::service', ['filter' => 'role:pemilik, admin2']);
+    $routes->get('service/form', 'Transaksi::form_service', ['filter' => 'role:pemilik, admin2']);
+    $routes->post('service/detail_service', 'Transaksi::detail_service', ['filter' => 'role:pemilik, admin2']);
+    $routes->get('service/save', 'Transaksi::save_service', ['filter' => 'role:pemilik, admin2']);
 });
 
 // Product

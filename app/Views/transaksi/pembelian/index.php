@@ -24,10 +24,10 @@
     <section class="section" style="background-color: white; padding: 2rem; box-shadow: 1px 2px 3px 1px rgba(0,0,0,0.75); border-radius: 15px;">
         <div class="row">
             <div class="col-lg-10">
-                <h4>Transaksi Penjualan Product</h4>
+                <h4>Transaksi Pembelian Bahan</h4>
             </div>
             <div class="col-lg-2">
-                <a class="btn btn-info" href="<?= base_url('user/transaksi/penjualan/form')?>"><i class="fas fa-plus"></i> Tambah Data</a>
+                <a class="btn btn-info" href="<?= base_url('user/transaksi/pembelian/form')?>"><i class="fas fa-plus"></i> Tambah Data</a>
             </div>
         </div>
         <div class="row">
@@ -39,6 +39,7 @@
                                 <th class="text-center">No</th>
                                 <th class="text-center">ID Transaksi</th>
                                 <th class="text-center">Tgl. Transaksi</th>
+                                <th class="text-center">Supplier</th>
                                 <th class="text-center">Total Transaksi</th>
                                 <th class="text-center">Kembalian</th>
                                 <th class="text-center">Jumlah Bayar</th>
@@ -49,16 +50,17 @@
                         <tbody>
                         <?php 
                         $no = 1;
-                        foreach ($pnj as $key => $value) { ?>
+                        foreach ($pmb as $key => $value) { ?>
                             <tr>
                                 <td><?= $no++ ?></td>
                                 <td><?= $value->id_transaksi ?></td>
                                 <td><?= $value->tgl_transaksi ?></td>
-                                <td><?= $value->subtotal ?></td>
-                                <td><?= $value->kembalian ?></td>
-                                <td><?= $value->jumlah_bayar ?></td>
-                                <td><?= ($value->status == 'selesai') ? '<span class="badge badge-success">'.ucwords($value->status).'</span>' : '<span class="badge badge-warning">'.ucwords($value->status).'</span>'?></td>
-                                <td>
+                                <td><?= ucwords($value->supplier) ?></td>
+                                <td class="text-right"><?= $value->subtotal ?></td>
+                                <td class="text-right"><?= $value->kembalian ?></td>
+                                <td class="text-right"><?= $value->jumlah_bayar ?></td>
+                                <td class="text-center"><?= ($value->status == 'selesai') ? '<span class="badge badge-success">'.ucwords($value->status).'</span>' : '<span class="badge badge-warning">'.ucwords($value->status).'</span>'?></td>
+                                <td class="text-right">
                                     <button class="btn btn-sm btn-secondary">Detail</button>
                                 </td>
                             </tr>

@@ -53,6 +53,7 @@
                             <li class="nav-item dropdown" style="background-color: #6e60a3;">
                                 <a href="#" class="nav-link has-dropdown text-white" data-toggle="dropdown" style="background-color: #6e60a3;"><i class="fas fa-concierge-bell"></i> <span>Masterdata</span></a>
                                 <ul class="dropdown-menu" style="background-color: #6e60a3;">
+                                    <li><a class="nav-link text-white" href="/user/dashboard/masterdata/aset" style="background-color: #6e60a3;">Aset</a></li>
                                     <li><a class="nav-link text-white" href="/user/dashboard/masterdata/pelanggan" style="background-color: #6e60a3;">Pelanggan</a></li>
                                     <li><a class="nav-link text-white" href="/user/dashboard/masterdata/satuan" style="background-color: #6e60a3;">Satuan</a></li>
                                     <li><a class="nav-link text-white" href="/user/dashboard/masterdata/product" style="background-color: #6e60a3;">Product</a></li>
@@ -67,10 +68,12 @@
                             <li class="nav-item dropdown" style="background-color: #6e60a3;">
                                 <a href="#" class="nav-link has-dropdown text-white" data-toggle="dropdown" style="background-color: #6e60a3;"><i class="fas fa-concierge-bell"></i> <span>Transaksi</span></a>
                                 <ul class="dropdown-menu" style="background-color: #6e60a3;">
-                                    <li><a class="nav-link text-white" href="/user/dashboard/service" style="background-color: #6e60a3;">Service</a></li>
+                                    <!-- <li><a class="nav-link text-white" href="/user/dashboard/service" style="background-color: #6e60a3;">Service 1</a></li> -->
+                                    <li><a class="nav-link text-white" href="<?= base_url('user/transaksi/service')?>" style="background-color: #6e60a3;">Service</a></li>
                                     <!-- <li><a class="nav-link text-white" href="/user/dashboard/product" style="background-color: #6e60a3;">Penjualan Product</a></li> -->
                                     <li><a class="nav-link text-white" href="/user/transaksi/penjualan" style="background-color: #6e60a3;">Penjualan Product</a></li>
-                                    <li><a class="nav-link text-white" href="/user/dashboard/product" style="background-color: #6e60a3;">Pembelian Bahan</a></li>
+                                    <!-- <li><a class="nav-link text-white" href="/user/dashboard/product" style="background-color: #6e60a3;">Pembelian Bahan</a></li> -->
+                                    <li><a class="nav-link text-white" href="/user/transaksi/pembelian" style="background-color: #6e60a3;">Pembelian Bahan</a></li>
                                 </ul>
 
                                 <ul class="dropdown-menu" style="background-color: #6e60a3;">
