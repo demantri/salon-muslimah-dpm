@@ -96,6 +96,23 @@ class KodeOtomatis extends Model
         return $kode;
     }
 
+    public function id_pengeluaran_aset()
+    {
+        $q = $this->db->query("SELECT MAX(RIGHT(id_transaksi,3)) as kode FROM tb_transaksi WHERE status = 'selesai' and jenis = 'Pengeluaran Aset'");
+        $kode = "";
+        if ($q->getNumRows() > 0) {
+            foreach ($q->getResult() as $k) {
+                $tmp = ((int) $k->kode) + 1;
+                $kd  = sprintf("%03s", $tmp);
+            }
+        } else {
+            $kd = "001";
+        }
+        $date = date('Ymd');
+        $kode   = "TRXA".$date.$kd;
+        return $kode;
+    }
+
     function generateRandomString($length = 10) {
         $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
         $charactersLength = strlen($characters);

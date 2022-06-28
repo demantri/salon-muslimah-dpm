@@ -74,6 +74,7 @@
                                     <li><a class="nav-link text-white" href="/user/transaksi/penjualan" style="background-color: #6e60a3;">Penjualan Product</a></li>
                                     <!-- <li><a class="nav-link text-white" href="/user/dashboard/product" style="background-color: #6e60a3;">Pembelian Bahan</a></li> -->
                                     <li><a class="nav-link text-white" href="/user/transaksi/pembelian" style="background-color: #6e60a3;">Pembelian Bahan</a></li>
+                                    <li><a class="nav-link text-white" href="/user/transaksi/pengeluaranAset" style="background-color: #6e60a3;">Pengeluaran Aset</a></li>
                                 </ul>
 
                                 <ul class="dropdown-menu" style="background-color: #6e60a3;">
@@ -87,7 +88,7 @@
                                             <div class="dropdown-menu" aria-labelledby="dropdownMenuLink" style="background-color: #6e60a3;">
                                                 <a class="dropdown-item text-white" href="/user/dashboard/pencatatan-kas/pengeluaran/gaji" style="background-color: #6e60a3;">Gaji</a>
                                                 <a class="dropdown-item text-white" href="/user/dashboard/pencatatan-kas/pengeluaran/beban" style="background-color: #6e60a3;">Beban</a>
-                                                <a class="dropdown-item text-white" href="/user/dashboard/pencatatan-kas/pengeluaran/aset" style="background-color: #6e60a3;">Aset</a>
+                                                <!-- <a class="dropdown-item text-white" href="/user/dashboard/pencatatan-kas/pengeluaran/aset" style="background-color: #6e60a3;">Aset</a> -->
                                                 <!-- <a class="dropdown-item text-white" href="/user/dashboard/pencatatan-kas/pengeluaran/bahan" style="background-color: #6e60a3;">Bahan</a> -->
                                                 <a class="dropdown-item text-white" href="/user/dashboard/pencatatan-kas/pengeluaran/lainnya" style="background-color: #6e60a3;">Transaksi Lainnya</a>
                                             </div>

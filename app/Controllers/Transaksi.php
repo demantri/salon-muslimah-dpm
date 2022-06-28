@@ -349,7 +349,179 @@ class Transaksi extends BaseController
         $data = $this->db->query("select * from tb_product where id_product = '$id_product'")->getRow();
         echo json_encode($data);
     }
+    
+    public function pengeluaranAset()
+    {
+        $model = new DataKelolaAdminModel;
+        $pengeluaran_aset = $this->db->query("select * from tb_transaksi where jenis = 'pengeluaran aset'")->getResult();
+        $data = [
+            'model' => $model,
+            'dataTransaksi' => $model->get(),
+            'all_data' => $model->getDataTransaksi(),
+            'totalPembelian' => $model->getTotalPembelian(),
+            'namaAdmin' => $model->getNamaAdmin(),
+            'tanggalPembelian' => $model->getTanggalPembelian(),
+            'totalHistoryPembayaran' => $model->getTotalHistoryPembayaran(),
+            'title' => 'Home',
+            'tampil' => 'transaksi/pengeluaran_aset/index',
+            'pager' => $model->pager,
+            'dataStockBahan' => $this->StockModel->getDataStockBahan(),
+            'dataJenisService' => $this->JenisServiceModel->get(),
+            'dataJenisTransaksiLainnya' => $this->JenisTransaksiLainnyaModel->get(),
+            'dataJenisBeban' => $this->JenisBebanModel->getDataJenisBeban(),
+            'pengeluaran_aset' => $pengeluaran_aset
+        ];
+        return view('wrapp', $data);
+    }
 
+    public function form_pengeluaranAset()
+    {
+        $model = new DataKelolaAdminModel;
+
+        $kodeOtomatis = new KodeOtomatis();
+        $kode = $kodeOtomatis->id_pengeluaran_aset();
+
+        // $product = $this->db->query("select * from tb_product where status = 1 and stok_akhir > 5")->getResult();
+        $product = $this->db->query("SELECT a.*, b.keterangan 
+        FROM tb_product a 
+        JOIN tb_kategori b ON a.id_kategori = b.id
+        WHERE keterangan != 'operasional' 
+        AND status = 1")->getResult();
+        
+        $detail_penjualan = $this->db->query("SELECT a.* , b.nama_product
+        FROM tb_detail_transaksi a 
+        LEFT JOIN tb_product b ON a.id_product = b.id_product
+        where id_transaksi = '$kode'
+        ORDER BY a.id ASC")->getResult();
+
+        $pelanggan = $this->db->query("select * from tb_pelanggan")->getResult();
+        
+        $data = [
+            'model' => $model,
+            'dataTransaksi' => $model->get(),
+            'all_data' => $model->getDataTransaksi(),
+            'totalPembelian' => $model->getTotalPembelian(),
+            'namaAdmin' => $model->getNamaAdmin(),
+            'tanggalPembelian' => $model->getTanggalPembelian(),
+            'totalHistoryPembayaran' => $model->getTotalHistoryPembayaran(),
+            'title' => 'Home',
+            'tampil' => 'transaksi/pengeluaran_aset/add',
+            'pager' => $model->pager,
+            'dataStockBahan' => $this->StockModel->getDataStockBahan(),
+            'dataJenisService' => $this->JenisServiceModel->get(),
+            'dataJenisTransaksiLainnya' => $this->JenisTransaksiLainnyaModel->get(),
+            'dataJenisBeban' => $this->JenisBebanModel->getDataJenisBeban(),
+            'product' => $product,
+            'detail_penjualan' => $detail_penjualan,
+            'pelanggan' => $pelanggan,
+            'kode' => $kode
+        ];
+        return view('wrapp', $data);   
+    }
+
+    public function getAset()
+    {
+        $jenis_aset = $this->request->getVar('jenis_aset');
+        $data = $this->db->query("select * from tb_aset where jenis_aset = '$jenis_aset'")->getResult();
+        echo json_encode($data);
+    }
+
+    public function detail_pengeluaranAset()
+    {
+        /** blm selesai */
+        $id_transaksi = $this->request->getVar('id_transaksi');
+        $tgl_transaksi = $this->request->getVar('tgl_transaksi');
+        $jenis_aset = $this->request->getVar('jenis_aset');
+        $aset = $this->request->getVar('aset');
+        $harga_satuan = $this->request->getVar('harga_satuan');
+        $qty = $this->request->getVar('qty');
+        $subtotal = $harga_satuan * $qty;
+
+        
+        $cekTrans = $this->db->query("select * from tb_transaksi where id_transaksi = '$id_transaksi' and status = 'ongoing' and jenis = 'pengeluaran aset'")->getNumRows();
+        $cekProduct = $this->db->query("select * from tb_detail_pengeluaran_aset where id_transaksi = '$id_transaksi' and id_aset = '$aset'")->getRow();
+        // print_r(count($cekTransDetail));exit;
+        
+        if ($cekTrans == 0) {
+            /** insert tb_transaksi */
+            $data = [
+                'id_transaksi' => $id_transaksi,
+                'tgl_transaksi' => $tgl_transaksi,
+                'jenis' => 'Pengeluaran aset',
+                'status' => 'ongoing',
+            ];
+            $this->db->table('tb_transaksi')
+            ->insert($data);
+
+            $detail = [
+                'id_transaksi' => $id_transaksi,
+                'id_aset' => $aset,
+                'jenis_aset' => $jenis_aset,
+                'harga_satuan' => $harga_satuan,
+                'qty' => $qty,
+                'subtotal' => $subtotal,
+            ];
+            $this->db->table('tb_detail_pengeluaran_aset')
+            ->insert($detail);
+        } else {
+            if (empty($cekProduct->id_aset)) {
+                $detail = [
+                    'id_transaksi' => $id_transaksi,
+                    'id_aset' => $aset,
+                    'qty' => $qty,
+                    'harga_satuan' => $harga_satuan,
+                    'subtotal' => $subtotal,
+                ];
+                $this->db->table('tb_detail_pengeluaran_aset')
+                ->insert($detail);
+            } else {
+                $data = [
+                    'qty' => $qty + $cekProduct->qty
+                ];
+
+                $this->db->table('tb_detail_pengeluaran_aset')
+                ->where('id_transaksi', $id_transaksi)
+                ->where('id_aset', $aset)
+                ->update($data);
+            }
+        }
+
+        return redirect()->to('/user/transaksi/pengeluaranAset/form');
+    }
+
+    public function savepengeluaranAset()
+    {
+        $id_transaksi = $this->request->getVar('id_transaksi_bayar');
+        $nama_pelanggan = $this->request->getVar('nama_pelanggan');
+        $jenis_pembayaran = $this->request->getVar('jenis_pembayaran');
+        $grandtotal = $this->request->getVar('grandtotal');
+        $jumlah_bayar = $this->request->getVar('jumlah_bayar');
+        $kembalian = $this->request->getVar('kembalian');
+
+        $data = [
+            'status' => 'selesai',
+            'subtotal' => $grandtotal,
+            'kembalian' => $kembalian,
+            'jumlah_bayar' => $jumlah_bayar,
+            'nama_pelanggan' => $nama_pelanggan,
+            'jenis_pembayaran' => $jenis_pembayaran
+        ];
+
+        $this->db->table('tb_transaksi')
+        ->where('id_transaksi', $id_transaksi)
+        ->update($data);
+
+        return redirect()->to('Transaksi/penjualan');
+    }
+
+    public function list_aset()
+    {
+        $id_aset = $this->request->getVar('id_aset');
+        $data = $this->db->query("select * from tb_aset where id_aset = '$id_aset'")->getRow();
+        echo json_encode($data);
+    }
+
+    /** transaksi service */
     public function service()
     {
         $model = new DataKelolaAdminModel;

@@ -65,20 +65,29 @@ $routes->group('/user/dashboard/masterdata', static function($routes) {
 
 /** routes transaksi */
 $routes->group('/user/transaksi', static function($routes) {
+    /** penjualan */
     $routes->get('penjualan', 'Transaksi::penjualan', ['filter' => 'role:pemilik, admin2']);
     $routes->get('penjualan/form', 'Transaksi::form_penjualan', ['filter' => 'role:pemilik, admin2']);
     $routes->post('penjualan/detail_penjualan', 'Transaksi::detail_penjualan', ['filter' => 'role:pemilik, admin2']);
     $routes->get('penjualan/save', 'Transaksi::save_penjualan', ['filter' => 'role:pemilik, admin2']);
 
+    /** pembelian */
     $routes->get('pembelian', 'Transaksi::pembelian', ['filter' => 'role:pemilik, admin2']);
     $routes->get('pembelian/form', 'Transaksi::form_pembelian', ['filter' => 'role:pemilik, admin2']);
     $routes->post('pembelian/detail_pembelian', 'Transaksi::detail_pembelian', ['filter' => 'role:pemilik, admin2']);
     $routes->get('pembelian/save', 'Transaksi::save_pembelian', ['filter' => 'role:pemilik, admin2']);
 
+    /** service */
     $routes->get('service', 'Transaksi::service', ['filter' => 'role:pemilik, admin2']);
     $routes->get('service/form', 'Transaksi::form_service', ['filter' => 'role:pemilik, admin2']);
     $routes->post('service/detail_service', 'Transaksi::detail_service', ['filter' => 'role:pemilik, admin2']);
     $routes->get('service/save', 'Transaksi::save_service', ['filter' => 'role:pemilik, admin2']);
+
+    /** pengeluaran aset */
+    $routes->get('pengeluaranAset', 'Transaksi::pengeluaranAset', ['filter' => 'role:pemilik, admin2']);
+    $routes->get('pengeluaranAset/form', 'Transaksi::form_pengeluaranAset', ['filter' => 'role:pemilik, admin2']);
+    $routes->post('pengeluaranAset/detail_pengeluaranAset', 'Transaksi::detail_pengeluaranAset', ['filter' => 'role:pemilik, admin2']);
+    $routes->get('pengeluaranAset/save', 'Transaksi::save_pengeluaranAset', ['filter' => 'role:pemilik, admin2']);
 });
 
 // Product
