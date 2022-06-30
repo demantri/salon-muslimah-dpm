@@ -10,6 +10,10 @@
             <form action="<?= base_url('Transaksi/savePembelian')?>" method="post">
                 <div class="modal-body">
                     <input type="hidden" id="id_transaksi_bayar" name="id_transaksi_bayar">
+                    <?php foreach ($detail_penjualan as $key => $value) { ?>
+                    <input type="hidden" name="product[]" value="<?= $value->id_product?>">
+                    <input type="hidden" name="qty[]" value="<?= $value->qty?>">
+                    <?php } ?>
                     <div class="form-group row">
                         <label for="supplier" class="col-sm-4 col-form-label">Nama Supplier</label>
                         <div class="col-sm-8">

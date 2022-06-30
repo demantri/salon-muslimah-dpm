@@ -7,22 +7,13 @@
                 <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form action="<?= base_url('Transaksi/savePenjualan')?>" method="post">
+            <form action="<?= base_url('Transaksi/savepengeluaranAset')?>" method="post">
                 <div class="modal-body">
                     <input type="hidden" id="id_transaksi_bayar" name="id_transaksi_bayar">
-                    <?php foreach ($detail_penjualan as $row) { ?>
-                    <input type="hidden" name="product[]" value="<?= $row->id_product?>">
-                    <input type="hidden" name="qty[]" value="<?= $row->qty?>">
-                    <?php } ?>
                     <div class="form-group row">
-                        <label for="nama_pelanggan" class="col-sm-4 col-form-label">Nama Pelanggan</label>
+                        <label for="supplier" class="col-sm-4 col-form-label">Nama Supplier</label>
                         <div class="col-sm-8">
-                            <select name="nama_pelanggan" id="nama_pelanggan" class="form-control" required>
-                                <option value="">-</option>
-                                <?php foreach ($pelanggan as $key => $value) {
-                                    echo '<option value='.$value->nama.'>'.$value->nama.'</option>';
-                                }?>
-                            </select>
+                            <input type="text" class="form-control" id="supplier" name="supplier" required>
                         </div>
                     </div>
 
@@ -48,7 +39,7 @@
                         <div class="form-group row">
                             <label for="jumlah_bayar" class="col-sm-4 col-form-label">Jumlah Bayar</label>
                             <div class="col-sm-8">
-                                <input type="text" id="jumlah_bayar" name="jumlah_bayar" class="form-control">
+                                <input type="number" id="jumlah_bayar" name="jumlah_bayar" class="form-control">
                                 <div id="info"></div>
                             </div>
                         </div>

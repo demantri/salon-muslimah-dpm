@@ -61,6 +61,11 @@ $routes->group('/user/dashboard/masterdata', static function($routes) {
     $routes->get('aset', 'Masterdata::aset', ['filter' => 'role:pemilik, admin2']);
     $routes->post('aset/save', 'Masterdata::asetSave', ['filter' => 'role:pemilik, admin2']);
     $routes->post('aset/edit', 'Masterdata::asetEdit', ['filter' => 'role:pemilik, admin2']);
+
+    /** jabatan */
+    $routes->get('jabatan', 'Masterdata::jabatan', ['filter' => 'role:pemilik, admin2']);
+    $routes->post('jabatan/save', 'Masterdata::jabatanSave', ['filter' => 'role:pemilik, admin2']);
+    $routes->post('jabatan/edit', 'Masterdata::jabatanEdit', ['filter' => 'role:pemilik, admin2']);
 });
 
 /** routes transaksi */

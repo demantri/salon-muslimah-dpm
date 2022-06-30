@@ -51,6 +51,7 @@
                         <input type="number" min="1" value="1" class="form-control" id="qty" name="qty">
                         </div>
                     </div>
+                    <input type="hidden" id="harga_satuan" name="harga_satuan">
                     <div class="form-group row">
                         <label for="" class="col-sm-4 col-form-label"></label>
                         <div class="col-sm-8">
@@ -62,7 +63,6 @@
             </div>
             <div class="card-body">
                 <div class="col-sm-12">
-                    <input type="text" id="harga_satuan">
                     <div class="table-responsive">
                         <table class="table table-bordered">
                             <thead>
@@ -80,7 +80,7 @@
                                 <?php 
                                 $no = 1;
                                 $grandtotal = 0;
-                                foreach ($detail_penjualan as $item) { ?>
+                                foreach ($detail_transaksi as $item) { ?>
                                 <?php 
                                 $grandtotal += $item->subtotal;
                                 ?>
@@ -108,21 +108,20 @@
                         <input type="hidden" id="grandtot" value="<?= $grandtotal ?>">
                     </div>
                     <?php 
-                    if (count($detail_penjualan) > 0) {
+                    if (count($detail_transaksi) > 0) {
                         # code...
                         echo '<button class="btn btn-success" data-toggle="modal" data-target="#bayar"> Bayar</button>';
                     } else {
                         # code...
                         echo '<button class="btn btn-danger" disabled> Bayar</button>';
                     }
-                    
                     ?>
                 </div>
             </div>
         </div>
     </section>
 </div>
-<?= $this->include('transaksi/penjualan/bayar');?>
+<?= $this->include('transaksi/pengeluaran_aset/bayar');?>
 <script src="<?= base_url('/js/vanilla-tilt.js'); ?>"></script>
 <script type="text/javascript">
     VanillaTilt.init(document.querySelectorAll(".info_card"), {
@@ -187,6 +186,45 @@
         });
     });
 
+    $(document).on("keyup", "#supplier", function() {
+        var value = $(this).val();
+        $("#kembalian").val(0);
+        if (value) {
+            $("#div-bawah").css("display", "block");
+            $("#btn-simpan").prop("disabled", false);
+
+            let total = $("#grandtot").val();
+            $("#grandtotal").val(total);
+
+            $("#jumlah_bayar").on("keyup", function() {
+                let jumlah_bayar = $(this).val();
+                let grandtot = $("input[name='grandtotal']").val();
+                let kembalian = jumlah_bayar - grandtot;
+
+                let info = `<i>jumlah bayar harus sama atau lebih dari total transaksi.</i>`;
+                $("#info").html(info);
+
+                if (jumlah_bayar) {
+                    if (kembalian >= 0) {
+                        $("#kembalian").val(kembalian);
+                        $("#btn-simpan").prop("disabled", false);
+                        $("#info").hide();
+                    } else {
+                        $("#kembalian").val(kembalian);
+                        $("#btn-simpan").prop("disabled", true);
+                        $("#info").show();
+                    }
+                } else {
+                    $("#btn-simpan").prop("disabled", true);
+                    $("#info").show();
+                }
+            });
+        } else {
+            $("#div-bawah").css("display", "none");
+            $("#btn-simpan").prop("disabled", true);
+        }
+    });
+
     $(document).on("change", "#nama_pelanggan", function() {
         var value = $(this).val();
         $("#kembalian").val(0);
@@ -224,5 +262,5 @@
             $("#div-bawah").css("display", "none");
             $("#btn-simpan").prop("disabled", true);
         }
-});
+    });
 </script>

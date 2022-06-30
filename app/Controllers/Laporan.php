@@ -39,6 +39,7 @@ class Laporan extends BaseController
     protected $StockModel;
     public function __construct()
     {
+        $this->db = \Config\Database::connect();;
         $this->UserProfileModel = new UserProfileModel();
         $this->PembelianModel = new PembelianModel();
         $this->AsetModel = new AsetModel();
@@ -90,78 +91,33 @@ class Laporan extends BaseController
         }
         $bulan = $this->request->getVar('bulan');
         $tahun = $this->request->getVar('tahun');
-        $data = [
-            'filterByBulan' => $bulan,
-            'filterByTahun' => $tahun,
-            'dataStockBahan' => $this->StockModel->getDataStockBahan(),
-            'title' => 'Home',
-            'tampil' => 'laporan/jurnalUmum',
-            'dataJenisService' => $this->JenisServiceModel->get(),
-            'dataJenisTransaksiLainnya' => $this->JenisTransaksiLainnyaModel->get(),
-            'dataJenisBeban' => $this->JenisBebanModel->getDataJenisBeban(),
-            'dataStockBahan' => $this->StockModel->getDataStockBahan(),
-            'dataTransaksiAset' => $this->PembayaranAsetModel->get(),
-            'dataTransaksiAsetByFilter' => $this->PembayaranAsetModel->getTransaksiAsetByFilter($bulan, $tahun),
-            'dataKelolaAset' => $this->DataKelolaAsetModel->get(),
-            'all_data_aset' => $this->DataKelolaAsetModel->getDataTransaksiAset(),
-            'totalPembelianAset' => $this->DataKelolaAsetModel->getTotalPembelianAset(),
-            // 'title' => 'Home',
-            // 'tampil' => 'pencatatan/pengeluaran/aset/history',
-            'dataJenisService' => $this->JenisServiceModel->get(),
-            'dataJenisTransaksiLainnya' => $this->JenisTransaksiLainnyaModel->get(),
-            'dataJenisBeban' => $this->JenisBebanModel->getDataJenisBeban(),
-            'dataStockBahan' => $this->StockModel->getDataStockBahan(),
-            'dataStockBahan' => $this->StockModel->getDataStockBahan(),
-            'dataTransaksiBeban' => $this->PembayaranBebanModel->get(),
-            'dataTransaksiBebanByFilter' => $this->PembayaranBebanModel->getTransaksiBebanByFilter($bulan, $tahun),
-            'dataKelolaBeban' => $this->DataKelolaBebanModel->get(),
-            'all_data' => $this->DataKelolaBebanModel->getDataTransaksiBeban(),
-            'totalPembelianBeban' => $this->DataKelolaBebanModel->getTotalPembelianBeban(),
-            // 'title' => 'Home',
-            // 'tampil' => 'pencatatan/pengeluaran/beban/history',
-            'dataJenisService' => $this->JenisServiceModel->get(),
-            'dataJenisTransaksiLainnya' => $this->JenisTransaksiLainnyaModel->get(),
-            'dataJenisBeban' => $this->JenisBebanModel->getDataJenisBeban(),
-            'dataStockBahan' => $this->StockModel->getDataStockBahan(),
-            'dataTransaksiBahan' => $this->PembayaranBahanModel->get(),
-            'dataTransaksiBahanByFilter' => $this->PembayaranBahanModel->getTransaksiBahanByFilter($bulan, $tahun),
-            'dataKelolaBahan' => $this->DataKelolaBahanModel->get(),
-            'all_data_bahan' => $this->DataKelolaBahanModel->getDataTransaksiBahan(),
-            'totalPembelianBahan' => $this->DataKelolaBahanModel->getTotalPembelianBahan(),
-            // 'title' => 'Home',
-            // 'tampil' => 'pencatatan/pengeluaran/bahan/history',
-            'dataJenisService' => $this->JenisServiceModel->get(),
-            'dataJenisTransaksiLainnya' => $this->JenisTransaksiLainnyaModel->get(),
-            'dataJenisBeban' => $this->JenisBebanModel->getDataJenisBeban(),
-            'dataStockBahan' => $this->StockModel->getDataStockBahan(),
-            'dataTransaksiLainnya' => $this->PembayaranTransaksiLainnyaModel->get(),
-            'dataTransaksiLainnyaByFilter' => $this->PembayaranTransaksiLainnyaModel->getTransaksiTransaksiLainnyaByFilter($bulan, $tahun),
-            'dataKelolaTransaksiLainnya' => $this->DataKelolaTransaksiLainnyaModel->get(),
-            'all_data_lainnya' => $this->DataKelolaTransaksiLainnyaModel->getDataTransaksiLainnya(),
-            'totalPembelianTransaksiLainnya' => $this->DataKelolaTransaksiLainnyaModel->getTotalPembelianTransaksiLainnya(),
-            // 'title' => 'Home',
-            // 'tampil' => 'pencatatan/pengeluaran/lainnya/history',
-            'dataJenisService' => $this->JenisServiceModel->get(),
-            'dataJenisTransaksiLainnya' => $this->JenisTransaksiLainnyaModel->get(),
-            'dataJenisBeban' => $this->JenisBebanModel->getDataJenisBeban(),
-            'dataStockBahan' => $this->StockModel->getDataStockBahan(),
-            // 'dataTransaksiAset' => $model->get(),
-            // 'all_data' => $model->getDataTransaksiAset(),
-            // 'totalPembelianAset' => $model->getTotalPembelianAset(),
-            'model' => $this->DataKaryawanModel,
-            'dataGajiKaryawan' => $this->DataKaryawanModel->get(),
-            'dataKaryawan' => $this->DataKaryawanModel->getDataKaryawan(),
-            'dataKaryawanAbsen' => $this->DataKaryawanModel->getDataKaryawanAbsen(),
-            'dataAbsen' => $this->DataKaryawanModel->getDataAbsen(),
-            // 'title' => 'Home',
-            // 'tampil' => 'pencatatan/pengeluaran/gaji/index',
-            'dataJenisService' => $this->JenisServiceModel->get(),
-            'dataJenisTransaksiLainnya' => $this->JenisTransaksiLainnyaModel->get(),
-            'dataJenisBeban' => $this->JenisBebanModel->getDataJenisBeban(),
-            'upahGaji' => $this->UpahGajiModel->get(),
-            'upahGajiByFilter' => $this->UpahGajiModel->getTransaksiGajiByFilter($bulan, $tahun),
-        ];
-        return view('wrapp', $data);
+        $periode = $tahun .'-'. $bulan;
+        if (isset($periode)) {
+            $jurnal = $this->db->query("SELECT a.*, b.namaAkun, b.header
+            FROM tb_jurnal a
+            JOIN akun b ON a.no_coa = b.kodeAkun
+            -- WHERE LEFT(tgl_jurnal, 7) = '2022-06'
+            ORDER BY id ASC")->getResult();
+            $data = [
+                'filterByBulan' => $bulan,
+                'filterByTahun' => $tahun,
+                'jurnal' => $jurnal,
+                'title' => 'Home',
+                'tampil' => 'laporan/jurnalUmum',
+                'dataJenisService' => $this->JenisServiceModel->get(),
+                'dataJenisTransaksiLainnya' => $this->JenisTransaksiLainnyaModel->get(),
+                'dataJenisBeban' => $this->JenisBebanModel->getDataJenisBeban(),
+                'dataStockBahan' => $this->StockModel->getDataStockBahan(),
+                'dataTransaksiAset' => $this->PembayaranAsetModel->get(),
+                'dataTransaksiAsetByFilter' => $this->PembayaranAsetModel->getTransaksiAsetByFilter($bulan, $tahun),
+                'dataKelolaAset' => $this->DataKelolaAsetModel->get(),
+                'all_data_aset' => $this->DataKelolaAsetModel->getDataTransaksiAset(),
+                'totalPembelianAset' => $this->DataKelolaAsetModel->getTotalPembelianAset(),
+                'upahGaji' => $this->UpahGajiModel->get(),
+                'upahGajiByFilter' => $this->UpahGajiModel->getTransaksiGajiByFilter($bulan, $tahun),
+            ];
+            return view('wrapp', $data);
+        }
     }
     public function bukuBesar()
     {

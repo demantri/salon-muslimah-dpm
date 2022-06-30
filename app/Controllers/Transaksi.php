@@ -11,6 +11,7 @@ use App\Models\JenisServiceModel;
 use App\Controllers\BaseController;
 use App\Models\DataKelolaAdminModel;
 use App\Models\JenisTransaksiLainnyaModel;
+use App\Models\JurnalModel;
 use App\Models\KodeOtomatis;
 
 class Transaksi extends BaseController
@@ -34,6 +35,7 @@ class Transaksi extends BaseController
         $this->JenisServiceModel = new JenisServiceModel();
         $this->JenisTransaksiLainnyaModel = new JenisTransaksiLainnyaModel();
         $this->JenisBebanModel = new JenisBebanModel();
+        $this->jurnal = new JurnalModel();
     }
 
     public function penjualan()
@@ -112,11 +114,9 @@ class Transaksi extends BaseController
         $harga_satuan = $this->request->getVar('harga_satuan');
         $qty = $this->request->getVar('qty');
         $subtotal = $harga_satuan * $qty;
-
         
         $cekTrans = $this->db->query("select * from tb_transaksi where id_transaksi = '$id_transaksi' and status = 'ongoing' and jenis = 'penjualan'")->getNumRows();
         $cekProduct = $this->db->query("select * from tb_detail_transaksi where id_transaksi = '$id_transaksi' and id_product = '$product'")->getRow();
-        // print_r(count($cekTransDetail));exit;
         
         if ($cekTrans == 0) {
             /** insert tb_transaksi */
@@ -150,8 +150,10 @@ class Transaksi extends BaseController
                 $this->db->table('tb_detail_transaksi')
                 ->insert($detail);
             } else {
+                $jml_akhir = $qty + $cekProduct->qty;
                 $data = [
-                    'qty' => $qty + $cekProduct->qty
+                    'qty' => $jml_akhir,
+                    'subtotal' => $jml_akhir * $cekProduct->harga_satuan
                 ];
 
                 $this->db->table('tb_detail_transaksi')
@@ -161,7 +163,7 @@ class Transaksi extends BaseController
             }
         }
 
-        return redirect()->to('Transaksi/form_penjualan');
+        return redirect()->to('user/transaksi/penjualan/form');
     }
 
     public function savePenjualan()
@@ -172,6 +174,9 @@ class Transaksi extends BaseController
         $grandtotal = $this->request->getVar('grandtotal');
         $jumlah_bayar = $this->request->getVar('jumlah_bayar');
         $kembalian = $this->request->getVar('kembalian');
+
+        $product = $this->request->getVar('product');
+        $qty = $this->request->getVar('qty');
 
         $data = [
             'status' => 'selesai',
@@ -185,6 +190,11 @@ class Transaksi extends BaseController
         $this->db->table('tb_transaksi')
         ->where('id_transaksi', $id_transaksi)
         ->update($data);
+
+        /** update stok */
+        $this->updateStok($product, $qty, 'product');
+
+        /** isi jurnal disini */
 
         return redirect()->to('Transaksi/penjualan');
     }
@@ -270,7 +280,6 @@ class Transaksi extends BaseController
         
         $cekTrans = $this->db->query("select * from tb_transaksi where id_transaksi = '$id_transaksi' and status = 'ongoing' and jenis = 'pembelian'")->getNumRows();
         $cekProduct = $this->db->query("select * from tb_detail_transaksi where id_transaksi = '$id_transaksi' and id_product = '$product'")->getRow();
-        // print_r(count($cekTransDetail));exit;
         
         if ($cekTrans == 0) {
             /** insert tb_transaksi */
@@ -304,8 +313,10 @@ class Transaksi extends BaseController
                 $this->db->table('tb_detail_transaksi')
                 ->insert($detail);
             } else {
+                $jml_akhir = $qty + $cekProduct->qty;
                 $data = [
-                    'qty' => $qty + $cekProduct->qty
+                    'qty' => $jml_akhir,
+                    'subtotal' => $jml_akhir * $cekProduct->harga_satuan
                 ];
 
                 $this->db->table('tb_detail_transaksi')
@@ -327,6 +338,11 @@ class Transaksi extends BaseController
         $jumlah_bayar = $this->request->getVar('jumlah_bayar');
         $kembalian = $this->request->getVar('kembalian');
 
+        $product = $this->request->getVar('product');
+        $qty = $this->request->getVar('qty');
+        
+        $this->updateStok($product, $qty, 'bahan');
+
         $data = [
             'status' => 'selesai',
             'subtotal' => $grandtotal,
@@ -339,6 +355,10 @@ class Transaksi extends BaseController
         $this->db->table('tb_transaksi')
         ->where('id_transaksi', $id_transaksi)
         ->update($data);
+
+        /** jurnal */
+        $this->jurnal->generateJurnal($id_transaksi, date('Y-m-d'), '500', 'Pembelian Bahan', 'd', $grandtotal);
+        $this->jurnal->generateJurnal($id_transaksi, date('Y-m-d'), '111', 'Pembelian Bahan', 'k', $grandtotal);
 
         return redirect()->to('Transaksi/pembelian');
     }
@@ -388,13 +408,11 @@ class Transaksi extends BaseController
         WHERE keterangan != 'operasional' 
         AND status = 1")->getResult();
         
-        $detail_penjualan = $this->db->query("SELECT a.* , b.nama_product
-        FROM tb_detail_transaksi a 
-        LEFT JOIN tb_product b ON a.id_product = b.id_product
-        where id_transaksi = '$kode'
-        ORDER BY a.id ASC")->getResult();
-
-        $pelanggan = $this->db->query("select * from tb_pelanggan")->getResult();
+        $detail_transaksi = $this->db->query("SELECT a.*, b.nama
+        FROM tb_detail_pengeluaran_aset a
+        LEFT JOIN tb_aset b ON a.id_aset = b.id_aset
+        WHERE id_transaksi = '$kode'
+        ORDER BY id ASC ")->getResult();
         
         $data = [
             'model' => $model,
@@ -412,8 +430,7 @@ class Transaksi extends BaseController
             'dataJenisTransaksiLainnya' => $this->JenisTransaksiLainnyaModel->get(),
             'dataJenisBeban' => $this->JenisBebanModel->getDataJenisBeban(),
             'product' => $product,
-            'detail_penjualan' => $detail_penjualan,
-            'pelanggan' => $pelanggan,
+            'detail_transaksi' => $detail_transaksi,
             'kode' => $kode
         ];
         return view('wrapp', $data);   
@@ -468,8 +485,9 @@ class Transaksi extends BaseController
                 $detail = [
                     'id_transaksi' => $id_transaksi,
                     'id_aset' => $aset,
-                    'qty' => $qty,
+                    'jenis_aset' => $jenis_aset,
                     'harga_satuan' => $harga_satuan,
+                    'qty' => $qty,
                     'subtotal' => $subtotal,
                 ];
                 $this->db->table('tb_detail_pengeluaran_aset')
@@ -492,7 +510,7 @@ class Transaksi extends BaseController
     public function savepengeluaranAset()
     {
         $id_transaksi = $this->request->getVar('id_transaksi_bayar');
-        $nama_pelanggan = $this->request->getVar('nama_pelanggan');
+        $supplier = $this->request->getVar('supplier');
         $jenis_pembayaran = $this->request->getVar('jenis_pembayaran');
         $grandtotal = $this->request->getVar('grandtotal');
         $jumlah_bayar = $this->request->getVar('jumlah_bayar');
@@ -503,7 +521,7 @@ class Transaksi extends BaseController
             'subtotal' => $grandtotal,
             'kembalian' => $kembalian,
             'jumlah_bayar' => $jumlah_bayar,
-            'nama_pelanggan' => $nama_pelanggan,
+            'supplier' => $supplier,
             'jenis_pembayaran' => $jenis_pembayaran
         ];
 
@@ -511,7 +529,11 @@ class Transaksi extends BaseController
         ->where('id_transaksi', $id_transaksi)
         ->update($data);
 
-        return redirect()->to('Transaksi/penjualan');
+        /** jurnal */
+        $this->jurnal->generateJurnal($id_transaksi, date('Y-m-d'), '122', 'Pengeluaran Aset', 'd', $grandtotal);
+        $this->jurnal->generateJurnal($id_transaksi, date('Y-m-d'), '111', 'Pengeluaran Aset', 'k', $grandtotal);
+
+        return redirect()->to('user/transaksi/pengeluaranAset');
     }
 
     public function list_aset()
@@ -664,5 +686,32 @@ class Transaksi extends BaseController
         $id = $this->request->getVar('id');
         $data = $this->db->query("select * from jenisService where id = '$id'")->getRow();
         echo json_encode($data);
+    }
+
+    private function updateStok($product, $qty, $jenis)
+    {
+        if ($jenis == 'bahan') {
+            foreach ($product as $key => $item) {
+                $last_stok = $this->db->query("select * from tb_product where id_product ='$item'")->getRow()->stok_akhir;
+                $data = [
+                    'stok_akhir' => $qty[$key] + $last_stok,
+                ];
+        
+                $this->db->table('tb_product')
+                ->where('id_product', $item)
+                ->update($data);
+            }
+        } else if ($jenis == 'product') {
+            foreach ($product as $key => $item) {
+                $last_stok = $this->db->query("select * from tb_product where id_product ='$item'")->getRow()->stok_akhir;
+                $data = [
+                    'stok_akhir' => $last_stok - $qty[$key],
+                ];
+        
+                $this->db->table('tb_product')
+                ->where('id_product', $item)
+                ->update($data);
+            }
+        }
     }
 }

@@ -89,6 +89,91 @@ class Masterdata extends BaseController
         return redirect()->to('/user/dashboard/masterdata/satuan');
     }
 
+    /** jabatan */
+    public function jabatan()
+    {
+        $model = new DataKelolaAdminModel;
+        $currentPage = $this->request->getVar('page_produk') ? $this->request->getVar('page_produk') : 1;
+        $tb_jabatan = $this->db->table('tb_jabatan')->get()->getResult();
+        $data = [
+            'model' => $model,
+            'dataTransaksi' => $model->get(),
+            'all_data' => $model->getDataTransaksi(),
+            'totalPembelian' => $model->getTotalPembelian(),
+            'namaAdmin' => $model->getNamaAdmin(),
+            'tanggalPembelian' => $model->getTanggalPembelian(),
+            'totalHistoryPembayaran' => $model->getTotalHistoryPembayaran(),
+            'title' => 'Home',
+            'tampil' => 'masterdata/jabatan/index',
+            'pager' => $model->pager,
+            'currentPage' => $currentPage,
+            'dataStockBahan' => $this->StockModel->getDataStockBahan(),
+            'dataJenisService' => $this->JenisServiceModel->get(),
+            'dataJenisTransaksiLainnya' => $this->JenisTransaksiLainnyaModel->get(),
+            'dataJenisBeban' => $this->JenisBebanModel->getDataJenisBeban(),
+            'tb_jabatan' => $tb_jabatan
+        ];
+        return view('wrapp', $data);
+    }
+
+    public function jabatanSave()
+    {
+        $deskripsi = $this->request->getVar('deskripsi');
+        $gapok = $this->request->getVar('gapok');
+        
+        $data = [
+            'deskripsi' => $deskripsi,
+            'gapok' => $gapok
+        ];
+        $this->db->table('tb_jabatan')
+        ->insert($data);
+
+        return redirect()->to('user/dashboard/masterdata/jabatan');
+    }
+
+    public function jabatanEdit()
+    {
+        $id = $this->request->getVar('id');
+        $keterangan = $this->request->getVar('keterangan');
+
+        $data = [
+            'keterangan' => $keterangan
+        ];
+
+        $this->db->table('tb_satuan')
+        ->where('id', $id)
+        ->update($data);
+
+        return redirect()->to('/user/dashboard/masterdata/satuan');
+    }
+
+    /** jenis service */
+    public function jenisService()
+    {
+        $model = new DataKelolaAdminModel;
+        $currentPage = $this->request->getVar('page_produk') ? $this->request->getVar('page_produk') : 1;
+        $jenis_service = $this->db->table('jenisService')->get()->getResult();
+        $data = [
+            'model' => $model,
+            'dataTransaksi' => $model->get(),
+            'all_data' => $model->getDataTransaksi(),
+            'totalPembelian' => $model->getTotalPembelian(),
+            'namaAdmin' => $model->getNamaAdmin(),
+            'tanggalPembelian' => $model->getTanggalPembelian(),
+            'totalHistoryPembayaran' => $model->getTotalHistoryPembayaran(),
+            'title' => 'Home',
+            'tampil' => 'masterdata/jenis_service/index',
+            'pager' => $model->pager,
+            'currentPage' => $currentPage,
+            'dataStockBahan' => $this->StockModel->getDataStockBahan(),
+            'dataJenisService' => $this->JenisServiceModel->get(),
+            'dataJenisTransaksiLainnya' => $this->JenisTransaksiLainnyaModel->get(),
+            'dataJenisBeban' => $this->JenisBebanModel->getDataJenisBeban(),
+            'jenis_service' => $jenis_service
+        ];
+        return view('wrapp', $data);
+    }
+
     /** pelanggan */
     public function pelanggan()
     {
