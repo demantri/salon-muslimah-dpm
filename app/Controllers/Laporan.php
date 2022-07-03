@@ -96,7 +96,7 @@ class Laporan extends BaseController
             $jurnal = $this->db->query("SELECT a.*, b.namaAkun, b.header
             FROM tb_jurnal a
             JOIN akun b ON a.no_coa = b.kodeAkun
-            -- WHERE LEFT(tgl_jurnal, 7) = '2022-06'
+            WHERE LEFT(tgl_jurnal, 7) = '$periode'
             ORDER BY id ASC")->getResult();
             $data = [
                 'filterByBulan' => $bulan,

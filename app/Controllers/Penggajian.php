@@ -35,7 +35,8 @@ class Penggajian extends BaseController
         $model = new DataKelolaAdminModel;
         $kode_otomatis = new KodeOtomatis();
         $kode = $kode_otomatis->id_gaji();
-        $pegawai = $this->db->query("select * from karyawan")->getResult();
+        $pegawai = $this->db->query("SELECT * FROM karyawan 
+        WHERE left(tanggalPembayaranGaji,7) <> LEFT(SYSDATE(), 7) OR tanggalPembayaranGaji IS NULL")->getResult();
         $data = [
             'model' => $model,
             'dataTransaksi' => $model->get(),
@@ -86,5 +87,45 @@ class Penggajian extends BaseController
 
         $data = $this->db->query($q)->getRow();
         echo json_encode($data);
+    }
+
+    public function savePenggajian()
+    {
+        $id_gaji = $this->request->getVar('id_gaji');
+        $tgl_gaji = $this->request->getVar('tgl_gaji'); 
+        $pegawai = $this->request->getVar('pegawai'); 
+        $gapok = $this->request->getVar('gapok'); 
+        $bonus = $this->request->getVar('bonus'); 
+        $jml_service = $this->request->getVar('jml_service'); 
+        $total_transaksi_service = $this->request->getVar('total_transaksi_service'); 
+        $bonus_service = $this->request->getVar('bonus_service'); 
+        $gaji_bersih = $this->request->getVar('gaji_bersih');
+
+        $data = [
+            'id_gaji' => $id_gaji,
+            'id_pegawai' => $pegawai,
+            'tgl_gaji' => $tgl_gaji,
+            'periode' => date('Y-m', strtotime($tgl_gaji)),
+            'total_service' => $total_transaksi_service,
+            'gajipokok' => $gapok,
+            'persentase_bonus' => $bonus,
+            'jml_service' => $jml_service,
+            'bonus_service' => $bonus_service,
+            'gaji_bersih' => $gaji_bersih,
+        ];
+        $this->db->table("tb_penggajian")->insert($data);
+
+        $update = [
+            'tanggalPembayaranGaji' => $tgl_gaji
+        ];
+        $this->db->table('karyawan')
+        ->where('idKaryawan', $pegawai)
+        ->update($update);
+
+        /** jurnal */
+        $this->jurnal->generateJurnal($id_gaji, date('Y-m-d'), '520', 'Penggajian periode '.date('Y-m', strtotime($tgl_gaji)).' ', 'd', $gaji_bersih);
+        $this->jurnal->generateJurnal($id_gaji, date('Y-m-d'), '111', 'Penggajian periode '.date('Y-m', strtotime($tgl_gaji)).' ', 'k', $gaji_bersih);
+
+        return redirect()->to('user/dashboard/penggajian');
     }
 }

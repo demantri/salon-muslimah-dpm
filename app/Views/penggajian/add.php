@@ -7,7 +7,7 @@
                 <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form action="<?= base_url('Transaksi/savePenjualan')?>" method="post">
+            <form action="<?= base_url('Penggajian/savePenggajian')?>" method="post">
                 <div class="modal-body">
                 
                     <div class="form-group row">
@@ -47,16 +47,30 @@
                         </div>
 
                         <div class="form-group row">
-                            <label for="jml_service" class="col-sm-4 col-form-label">Detail Service</label>
-                            <div class="col-sm-4">
-                                <input type="text" id="jml_service" name="jml_service" class="form-control" readonly>
-                                <i>jumlah service</i>
+                            <label for="detail_service" class="col-sm-4 col-form-label">Detail Service</label>
+                            <div class="col-sm-3">
+                                <input type="" id="bonus" name="bonus" class="form-control" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');">
+                                <i style="font-size: small;">bonus (%)</i>
                             </div>
-                            <div class="col-sm-4">
-                                <input type="text" id="bonus_service" name="bonus_service" class="form-control" readonly>
-                                <i>bonus service</i>
+                            <div class="col-sm-2">
+                                <input type="text" id="jml_service" name="jml_service" class="form-control" readonly>
+                                <i style="font-size: small;">jumlah service</i>
+                            </div>
+                            <div class="col-sm-3">
+                                <input type="text" id="total_transaksi_service" name="total_transaksi_service" class="form-control" readonly>
+                                <i style="font-size: small;">total transaksi service</i>
                             </div>
                         </div>
+
+                        <div class="form-group row">
+                            <label for="bonus_service" class="col-sm-4 col-form-label">Bonus Service</label>
+                            <div class="col-sm-8">
+                                <input type="text" id="bonus_service" name="bonus_service" class="form-control" readonly>
+                                <i style="font-size: small;">Note: bonus didapatkan total transaksi service * persentase bonus.</i>
+                            </div>
+                        </div>
+
+                        <hr>
 
                         <div class="form-group row">
                             <label for="gaji_bersih" class="col-sm-4 col-form-label">Gaji Bersih</label>

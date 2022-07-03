@@ -67,9 +67,18 @@
     });
 </script>
 <script>
+
+    function bonus(value) {
+        $("#bonus").on("keyup", function() {
+            return parseInt(value);
+        });
+    }
+
     $(document).ready(function() {
         $("#tablemenu").DataTable();
+        var bonus = $("#bonus").val(0);
 
+        $("#btn-simpan").prop("disabled", true);
         $("#pegawai").on("change", function() {
             var value = $(this).val();
             if (value) {
@@ -83,17 +92,37 @@
                         $(".div_detail").css("display", "block");
 
                         var obj = JSON.parse(response);
-                        var bonus_service = parseInt(10/100) * obj.total_transaksi_per_pegawai
                         console.log(obj);
+                        var bonus_service = parseInt(10/100) * obj.total_transaksi_per_pegawai
+                        // console.log(obj);
+
+                        $("#bonus").on("keyup", function() {
+                            var typing = $(this).val();
+                            if (typing) {
+                                var bonus = parseInt($("#bonus").val()) / 100;
+                                var tot_bonus = bonus * obj.total_transaksi_per_pegawai
+                                $("#bonus_service").val(tot_bonus);
+
+                                var gaji_bersih = parseInt(obj.gapok) + tot_bonus;
+                                $("#gaji_bersih").val(gaji_bersih);
+                            } else {
+                                $("#bonus_service").val(0);
+                                $("#gaji_bersih").val(obj.gapok);
+                            }
+                        });
 
                         $("#gapok").val(obj.gapok);
                         $("#jml_service").val(obj.jumlah_service);
-                        $("#bonus_service").val(obj.total_transaksi_per_pegawai);
+                        $("#total_transaksi_service").val(obj.total_transaksi_per_pegawai);
+                        $("#bonus_service").val(0);
                         $("#gaji_bersih").val(obj.gapok);
+
+                        $("#btn-simpan").prop("disabled", false);
                     }
                 })
             } else {
                 $(".div_detail").css("display", "none");
+                $("#btn-simpan").prop("disabled", true);
             }
         });
     });

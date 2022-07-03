@@ -33,21 +33,21 @@ $periodeTahun = [
             <div class="col">
                 <div class="card" style="background-color: white; padding: 2rem; box-shadow: 1px 2px 3px 1px rgba(0,0,0,0.75); border-radius: 15px;">
                     <div class="card-body">
-                        <form action="<?= base_url('user/dashboard/laporan/jurnal-umum')?>" method="post">
+                        <form action="<?= base_url('Laporan/jurnalUmum')?>" method="post">
                             <div class="form-group row">
                                 <label for="inputEmail3" class="col-sm-2 col-form-label">Periode</label>
                                 <div class="col-sm-2">
                                     <select class="custom-select mr-sm-2" id="jenisBeban1" name="bulan" required>
                                         <option class="text-center" value="">Pilih Bulan</option>
-                                        <option class="text-center" value="1">Januari</option>
-                                        <option class="text-center" value="2">Februari</option>
-                                        <option class="text-center" value="3">Maret</option>
-                                        <option class="text-center" value="4">April</option>
-                                        <option class="text-center" value="5">Mei</option>
-                                        <option class="text-center" value="6">Juni</option>
-                                        <option class="text-center" value="7">Juli</option>
-                                        <option class="text-center" value="8">Agustus</option>
-                                        <option class="text-center" value="9">September</option>
+                                        <option class="text-center" value="01">Januari</option>
+                                        <option class="text-center" value="02">Februari</option>
+                                        <option class="text-center" value="03">Maret</option>
+                                        <option class="text-center" value="04">April</option>
+                                        <option class="text-center" value="05">Mei</option>
+                                        <option class="text-center" value="06">Juni</option>
+                                        <option class="text-center" value="07">Juli</option>
+                                        <option class="text-center" value="08">Agustus</option>
+                                        <option class="text-center" value="09">September</option>
                                         <option class="text-center" value="10">Oktober</option>
                                         <option class="text-center" value="11">November</option>
                                         <option class="text-center" value="12">Desember</option>
@@ -82,25 +82,42 @@ $periodeTahun = [
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php foreach ($jurnal as $row) { ?>
+                                <?php 
+                                $total_debit = 0;
+                                $total_kredit = 0;
+                                foreach ($jurnal as $row) { ?>
+                                <?php
+                                if ($row->posisi_d_c == 'd') {
+                                    $total_debit += $row->nominal;
+                                } else {
+                                    $total_kredit += $row->nominal;
+                                }
+                                ?>
                                     <tr>
                                         <?php if ($row->posisi_d_c == 'd') { ?>
                                             <td><?= $row->tgl_jurnal ?></td>
                                             <td class="text-left"><?= $row->namaAkun ?></td>
                                             <td><?= $row->no_coa ?></td>
-                                            <td class="text-right"><?= $row->nominal ?></td>
+                                            <td class="text-right"><?= number_format($row->nominal) ?></td>
                                             <td></td>
                                         <?php } else { ?>
                                             <td></td>
                                             <td class="text-center"><?= $row->namaAkun ?></td>
                                             <td><?= $row->no_coa ?></td>
                                             <td></td>
-                                            <td class="text-right"><?= $row->nominal ?></td>
+                                            <td class="text-right"><?= number_format($row->nominal) ?></td>
                                         <?php } ?>
                                         
                                     </tr>
                                 <?php } ?>
                             </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th class="text-center" colspan="3">Jumlah</th>
+                                    <th class="text-right"><?= number_format($total_debit) ?></th>
+                                    <th class="text-right"><?= number_format($total_kredit) ?></th>
+                                </tr>
+                            </tfoot>
                         </table>
                     </div>
                 </div>
