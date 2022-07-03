@@ -86,7 +86,8 @@
                                             </a>
 
                                             <div class="dropdown-menu" aria-labelledby="dropdownMenuLink" style="background-color: #6e60a3;">
-                                                <a class="dropdown-item text-white" href="/user/dashboard/pencatatan-kas/pengeluaran/gaji" style="background-color: #6e60a3;">Gaji</a>
+                                                <!-- <a class="dropdown-item text-white" href="/user/dashboard/pencatatan-kas/pengeluaran/gaji" style="background-color: #6e60a3;">Gaji</a> -->
+                                                <a class="dropdown-item text-white" href="<?= base_url('user/dashboard/penggajian')?>" style="background-color: #6e60a3;">Gaji</a>
                                                 <a class="dropdown-item text-white" href="/user/dashboard/pencatatan-kas/pengeluaran/beban" style="background-color: #6e60a3;">Beban</a>
                                                 <!-- <a class="dropdown-item text-white" href="/user/dashboard/pencatatan-kas/pengeluaran/aset" style="background-color: #6e60a3;">Aset</a> -->
                                                 <!-- <a class="dropdown-item text-white" href="/user/dashboard/pencatatan-kas/pengeluaran/bahan" style="background-color: #6e60a3;">Bahan</a> -->

@@ -95,6 +95,11 @@ $routes->group('/user/transaksi', static function($routes) {
     $routes->get('pengeluaranAset/save', 'Transaksi::save_pengeluaranAset', ['filter' => 'role:pemilik, admin2']);
 });
 
+$routes->group('/user/dashboard', static function($routes) {
+    $routes->get('penggajian', 'Penggajian::index', ['filter' => 'role:pemilik, admin2']);
+    
+});
+
 // Product
 $routes->get('/user/dashboard/product', 'Product::index', ['filter' => 'role:pemilik,admin2']);
 $routes->get('/user/dashboard/product/offline-shipping', 'Product::index', ['filter' => 'role:pemilik,admin2']);

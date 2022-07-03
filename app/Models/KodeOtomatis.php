@@ -28,6 +28,23 @@ class KodeOtomatis extends Model
         return $kode;
     }
 
+    public function id_gaji()
+    {
+        $q = $this->db->query("SELECT MAX(RIGHT(id_gaji,3)) as kode FROM tb_penggajian");
+        $kode = "";
+        if ($q->getNumRows() > 0) {
+            foreach ($q->getResult() as $k) {
+                $tmp = ((int) $k->kode) + 1;
+                $kd  = sprintf("%03s", $tmp);
+            }
+        } else {
+            $kd = "001";
+        }
+		$date = date('Ymd');
+        $kode   = "PAYROLL".$date.$kd;
+        return $kode;
+    }
+
     public function id_service()
     {
         $q = $this->db->query("SELECT MAX(RIGHT(id_transaksi,3)) as kode FROM tb_transaksi_service WHERE status = 'selesai' and jenis = 'Service'");
