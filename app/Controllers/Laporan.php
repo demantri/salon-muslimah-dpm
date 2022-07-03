@@ -128,11 +128,55 @@ class Laporan extends BaseController
         }
         $bulan = $this->request->getVar('bulan');
         $tahun = $this->request->getVar('tahun');
-        $coa = $this->request->getVar('coa');
+        $periode = $tahun.'-'.$bulan;
+
+        $no_coa = $this->request->getVar('coa');
+        
+        $akun = $this->db->query("SELECT * FROM akun")->getResult();
+        $cek = date('m-Y', strtotime("-1 months", strtotime($periode)));
+        $bulan1 = substr($cek, 0, 2);
+        $tahun1 = substr($cek, 3, 7);
+        $query = $this->db->query("SELECT 
+        SUM(nominal) AS debit, 
+        (
+            SELECT sum(nominal) 
+            FROM tb_jurnal 
+            WHERE no_coa = '111' 
+            AND MONTH(tgl_jurnal) <= '06' 
+            AND YEAR(tgl_jurnal) <= '2022' 
+            and posisi_d_c = 'k' 
+        ) AS kredit
+        FROM tb_jurnal
+        WHERE no_coa = '111'
+        AND MONTH(tgl_jurnal) <= '06'
+        AND YEAR(tgl_jurnal) <= '2022'
+        AND posisi_d_c = 'd'");
+        
+        $debit = $query->getRow()->debit;
+        $kredit = $query->getRow()->kredit;
+        // print_r($kredit);exit;
+        $pengurangan = $debit - $kredit;
+
+        /** cek saldo awal berdasarkan no coa */
+        $saldoByCoa = $this->db->query("SELECT * FROM akun WHERE kodeAkun = '$no_coa'")->getRow()->saldo_awal;
+        $saldo_awal = $saldoByCoa + $pengurangan;
+        print_r($saldoByCoa);exit;
+
+        $query2 = $this->db->query("SELECT 
+        a.*, b.namaAkun, b.saldo_awal, b.header
+        FROM tb_jurnal a
+        JOIN akun b ON a.no_coa = b.kodeAkun
+        WHERE b.kodeAkun = '$no_coa' 
+        AND LEFT(a.tgl_jurnal, 7) = '$periode'
+        ORDER BY tgl_jurnal ASC");
+
+        $listBB = $query2->result();
+        $getSaldo = $query2->getRow()->saldo_awal ?? 0 ;
+
         $data = [
-            'filterByBulan' => $bulan,
-            'filterByTahun' => $tahun,
-            'filterByCoa' => $coa,
+            'list' => $listBB,
+            'saldo_awal' => $saldo_awal,
+            'coa' => $akun,
             'dataStockBahan' => $this->StockModel->getDataStockBahan(),
             'title' => 'Home',
             'tampil' => 'laporan/bukuBesar',
@@ -145,61 +189,6 @@ class Laporan extends BaseController
             'dataKelolaAset' => $this->DataKelolaAsetModel->get(),
             'all_data_aset' => $this->DataKelolaAsetModel->getDataTransaksiAset(),
             'totalPembelianAset' => $this->DataKelolaAsetModel->getTotalPembelianAset(),
-            // 'title' => 'Home',
-            // 'tampil' => 'pencatatan/pengeluaran/aset/history',
-            'dataJenisService' => $this->JenisServiceModel->get(),
-            'dataJenisTransaksiLainnya' => $this->JenisTransaksiLainnyaModel->get(),
-            'dataJenisBeban' => $this->JenisBebanModel->getDataJenisBeban(),
-            'dataStockBahan' => $this->StockModel->getDataStockBahan(),
-            'dataStockBahan' => $this->StockModel->getDataStockBahan(),
-            'dataTransaksiBeban' => $this->PembayaranBebanModel->get(),
-            'dataTransaksiBebanByFilter' => $this->PembayaranBebanModel->getTransaksiBebanByFilter($bulan, $tahun),
-            'dataKelolaBeban' => $this->DataKelolaBebanModel->get(),
-            'all_data' => $this->DataKelolaBebanModel->getDataTransaksiBeban(),
-            'totalPembelianBeban' => $this->DataKelolaBebanModel->getTotalPembelianBeban(),
-            // 'title' => 'Home',
-            // 'tampil' => 'pencatatan/pengeluaran/beban/history',
-            'dataJenisService' => $this->JenisServiceModel->get(),
-            'dataJenisTransaksiLainnya' => $this->JenisTransaksiLainnyaModel->get(),
-            'dataJenisBeban' => $this->JenisBebanModel->getDataJenisBeban(),
-            'dataStockBahan' => $this->StockModel->getDataStockBahan(),
-            'dataTransaksiBahan' => $this->PembayaranBahanModel->get(),
-            'dataTransaksiBahanByFilter' => $this->PembayaranBahanModel->getTransaksiBahanByFilter($bulan, $tahun),
-            'dataKelolaBahan' => $this->DataKelolaBahanModel->get(),
-            'all_data_bahan' => $this->DataKelolaBahanModel->getDataTransaksiBahan(),
-            'totalPembelianBahan' => $this->DataKelolaBahanModel->getTotalPembelianBahan(),
-            // 'title' => 'Home',
-            // 'tampil' => 'pencatatan/pengeluaran/bahan/history',
-            'dataJenisService' => $this->JenisServiceModel->get(),
-            'dataJenisTransaksiLainnya' => $this->JenisTransaksiLainnyaModel->get(),
-            'dataJenisBeban' => $this->JenisBebanModel->getDataJenisBeban(),
-            'dataStockBahan' => $this->StockModel->getDataStockBahan(),
-            'dataTransaksiLainnya' => $this->PembayaranTransaksiLainnyaModel->get(),
-            'dataTransaksiLainnyaByFilter' => $this->PembayaranTransaksiLainnyaModel->getTransaksiTransaksiLainnyaByFilter($bulan, $tahun),
-            'dataKelolaTransaksiLainnya' => $this->DataKelolaTransaksiLainnyaModel->get(),
-            'all_data_lainnya' => $this->DataKelolaTransaksiLainnyaModel->getDataTransaksiLainnya(),
-            'totalPembelianTransaksiLainnya' => $this->DataKelolaTransaksiLainnyaModel->getTotalPembelianTransaksiLainnya(),
-            // 'title' => 'Home',
-            // 'tampil' => 'pencatatan/pengeluaran/lainnya/history',
-            'dataJenisService' => $this->JenisServiceModel->get(),
-            'dataJenisTransaksiLainnya' => $this->JenisTransaksiLainnyaModel->get(),
-            'dataJenisBeban' => $this->JenisBebanModel->getDataJenisBeban(),
-            'dataStockBahan' => $this->StockModel->getDataStockBahan(),
-            // 'dataTransaksiAset' => $model->get(),
-            // 'all_data' => $model->getDataTransaksiAset(),
-            // 'totalPembelianAset' => $model->getTotalPembelianAset(),
-            'model' => $this->DataKaryawanModel,
-            'dataGajiKaryawan' => $this->DataKaryawanModel->get(),
-            'dataKaryawan' => $this->DataKaryawanModel->getDataKaryawan(),
-            'dataKaryawanAbsen' => $this->DataKaryawanModel->getDataKaryawanAbsen(),
-            'dataAbsen' => $this->DataKaryawanModel->getDataAbsen(),
-            // 'title' => 'Home',
-            // 'tampil' => 'pencatatan/pengeluaran/gaji/index',
-            'dataJenisService' => $this->JenisServiceModel->get(),
-            'dataJenisTransaksiLainnya' => $this->JenisTransaksiLainnyaModel->get(),
-            'dataJenisBeban' => $this->JenisBebanModel->getDataJenisBeban(),
-            'upahGaji' => $this->UpahGajiModel->get(),
-            'upahGajiByFilter' => $this->UpahGajiModel->getTransaksiGajiByFilter($bulan, $tahun),
         ];
         return view('wrapp', $data);
     }

@@ -95,9 +95,9 @@ $routes->group('/user/transaksi', static function($routes) {
     $routes->get('pengeluaranAset/save', 'Transaksi::save_pengeluaranAset', ['filter' => 'role:pemilik, admin2']);
 });
 
+/** penggajian */
 $routes->group('/user/dashboard', static function($routes) {
     $routes->get('penggajian', 'Penggajian::index', ['filter' => 'role:pemilik, admin2']);
-    
 });
 
 // Product
