@@ -83,6 +83,56 @@ class Laporan extends BaseController
         ];
         return view('wrapp', $data);
     }
+
+    public function arus_kas()
+    {
+        $pnd = $this->db->query("SELECT a.*, b.namaAkun, b.posisi_d_c AS saldo_normal, b.is_arus_kas, SUM(nominal) AS total
+        FROM tb_jurnal a 
+        JOIN akun b ON a.no_coa = b.kodeAkun
+        WHERE b.is_arus_kas = 1 
+        AND b.namaAkun LIKE '%pendapatan jasa%'
+        GROUP BY no_coa");
+
+        $beban1 = $this->db->query("SELECT a.*, b.namaAkun, b.posisi_d_c AS saldo_normal, b.is_arus_kas, SUM(nominal) AS total
+        FROM tb_jurnal a 
+        JOIN akun b ON a.no_coa = b.kodeAkun
+        WHERE b.is_arus_kas = 1
+        and b.namaAkun like '%beban%'
+        GROUP BY no_coa");
+
+        $pmb = $this->db->query("SELECT a.*, b.namaAkun, b.posisi_d_c AS saldo_normal, b.is_arus_kas, SUM(nominal) AS total
+        FROM tb_jurnal a 
+        JOIN akun b ON a.no_coa = b.kodeAkun
+        WHERE b.is_arus_kas = 2
+        and b.namaAkun like '%pembelian%'
+        GROUP BY no_coa");
+
+        $privee = $this->db->query("SELECT a.*, b.namaAkun, b.posisi_d_c AS saldo_normal, b.is_arus_kas, SUM(nominal) AS total
+        FROM tb_jurnal a 
+        JOIN akun b ON a.no_coa = b.kodeAkun
+        WHERE b.is_arus_kas = 3
+        GROUP BY no_coa");
+
+        $pendapatan_jasa = $pnd->getRow()->total;
+        $beban = $beban1->getResult();
+        $pembelian = $pmb->getResult();
+        $prive = $privee->getResult();
+
+        $data = [
+            'dataStockBahan' => $this->StockModel->getDataStockBahan(),
+            'title' => 'Home',
+            'tampil' => 'laporan/arus_kas',
+            'dataJenisService' => $this->JenisServiceModel->get(),
+            'dataJenisTransaksiLainnya' => $this->JenisTransaksiLainnyaModel->get(),
+            'dataJenisBeban' => $this->JenisBebanModel->getDataJenisBeban(),
+            'pendapatan_jasa' => $pendapatan_jasa,
+            'beban' => $beban,
+            'pembelian' => $pembelian,
+            'prive' => $prive,
+        ];
+        return view('wrapp', $data);
+    }
+
     public function jurnalUmum()
     {
         if ($this->request->getVar('bulan') == null && $this->request->getVar('tahun')) {
@@ -119,6 +169,7 @@ class Laporan extends BaseController
             return view('wrapp', $data);
         }
     }
+
     public function bukuBesar()
     {
         if ($this->request->getVar('bulan') == null && $this->request->getVar('tahun') && $this->request->getVar('coa')) {
@@ -128,70 +179,132 @@ class Laporan extends BaseController
         }
         $bulan = $this->request->getVar('bulan');
         $tahun = $this->request->getVar('tahun');
+        $akun = $this->db->query("SELECT * FROM akun order by kodeAkun asc")->getResult();
+
         $periode = $tahun.'-'.$bulan;
-
         $no_coa = $this->request->getVar('coa');
-        
-        $akun = $this->db->query("SELECT * FROM akun")->getResult();
-        $cek = date('m-Y', strtotime("-1 months", strtotime($periode)));
-        $bulan1 = substr($cek, 0, 2);
-        $tahun1 = substr($cek, 3, 7);
-        $query = $this->db->query("SELECT 
-        SUM(nominal) AS debit, 
-        (
-            SELECT sum(nominal) 
-            FROM tb_jurnal 
-            WHERE no_coa = '111' 
-            AND MONTH(tgl_jurnal) <= '06' 
-            AND YEAR(tgl_jurnal) <= '2022' 
-            and posisi_d_c = 'k' 
-        ) AS kredit
-        FROM tb_jurnal
-        WHERE no_coa = '111'
-        AND MONTH(tgl_jurnal) <= '06'
-        AND YEAR(tgl_jurnal) <= '2022'
-        AND posisi_d_c = 'd'");
-        
-        $debit = $query->getRow()->debit;
-        $kredit = $query->getRow()->kredit;
-        // print_r($kredit);exit;
-        $pengurangan = $debit - $kredit;
+        if (isset($periode, $no_coa)) {
+            # code...
+            $cek = date('m-Y', strtotime("-1 months", strtotime($periode)));
+            $bulan1 = substr($cek, 0, 2);
+            $tahun1 = substr($cek, 3, 7);
+            $query = $this->db->query("SELECT 
+            SUM(nominal) AS debit, 
+            (
+                SELECT sum(nominal) 
+                FROM tb_jurnal 
+                WHERE no_coa = '$no_coa' 
+                AND MONTH(tgl_jurnal) <= '$bulan1' 
+                AND YEAR(tgl_jurnal) <= '$tahun1' 
+                and posisi_d_c = 'k' 
+            ) AS kredit
+            FROM tb_jurnal
+            WHERE no_coa = '$no_coa'
+            AND MONTH(tgl_jurnal) <= '$bulan1'
+            AND YEAR(tgl_jurnal) <= '$tahun1'
+            AND posisi_d_c = 'd'");
+            
+            $debit = $query->getRow()->debit;
+            $kredit = $query->getRow()->kredit;
+            $pengurangan = $debit - $kredit;
+    
+            /** cek saldo awal berdasarkan no coa */
+            $saldoByCoa = $this->db->query("SELECT * FROM akun WHERE kodeAkun = '$no_coa'")->getRow()->saldo_awal;
+            $saldo_awal = $saldoByCoa + $pengurangan;
+    
+            $query2 = $this->db->query("SELECT 
+            a.*, b.namaAkun, b.saldo_awal, b.header
+            FROM tb_jurnal a
+            JOIN akun b ON a.no_coa = b.kodeAkun
+            WHERE b.kodeAkun = '$no_coa' 
+            AND LEFT(a.tgl_jurnal, 7) = '$periode'
+            ORDER BY tgl_jurnal ASC");
+    
+            $listBB = $query2->getResult();
+            $getSaldo = $query2->getRow()->saldo_awal ?? 0 ;
+    
+            $data = [
+                'per' => $periode,
+                'list' => $listBB,
+                'saldo_awal' => $saldo_awal,
+                'coa' => $akun,
+                'dataStockBahan' => $this->StockModel->getDataStockBahan(),
+                'title' => 'Home',
+                'tampil' => 'laporan/bukuBesar',
+                'dataJenisService' => $this->JenisServiceModel->get(),
+                'dataJenisTransaksiLainnya' => $this->JenisTransaksiLainnyaModel->get(),
+                'dataJenisBeban' => $this->JenisBebanModel->getDataJenisBeban(),
+                'dataStockBahan' => $this->StockModel->getDataStockBahan(),
+                'dataTransaksiAset' => $this->PembayaranAsetModel->get(),
+                'dataTransaksiAsetByFilter' => $this->PembayaranAsetModel->getTransaksiAsetByFilter($bulan, $tahun),
+                'dataKelolaAset' => $this->DataKelolaAsetModel->get(),
+                'all_data_aset' => $this->DataKelolaAsetModel->getDataTransaksiAset(),
+                'totalPembelianAset' => $this->DataKelolaAsetModel->getTotalPembelianAset(),
+            ];
+            return view('wrapp', $data);
+        } else {
+            $cek = date('m-Y', strtotime("-1 months", strtotime($periode)));
+            $bulan1 = substr($cek, 0, 2);
+            $tahun1 = substr($cek, 3, 7);
+            $query = $this->db->query("SELECT 
+            SUM(nominal) AS debit, 
+            (
+                SELECT sum(nominal) 
+                FROM tb_jurnal 
+                WHERE no_coa = '$no_coa' 
+                AND MONTH(tgl_jurnal) <= '$bulan1' 
+                AND YEAR(tgl_jurnal) <= '$tahun1' 
+                and posisi_d_c = 'k' 
+            ) AS kredit
+            FROM tb_jurnal
+            WHERE no_coa = '$no_coa'
+            AND MONTH(tgl_jurnal) <= '$bulan1'
+            AND YEAR(tgl_jurnal) <= '$tahun1'
+            AND posisi_d_c = 'd'");
+            
+            $debit = $query->getRow()->debit;
+            $kredit = $query->getRow()->kredit;
+            $pengurangan = $debit - $kredit;
+    
+            /** cek saldo awal berdasarkan no coa */
+            $saldoByCoa = $this->db->query("SELECT * FROM akun WHERE kodeAkun = '$no_coa'")->getRow()->saldo_awal ?? 0;
+            // print_r($saldoByCoa);exit;
+            $saldo_awal = $saldoByCoa + $pengurangan;
+    
+            $query2 = $this->db->query("SELECT 
+            a.*, b.namaAkun, b.saldo_awal, b.header
+            FROM tb_jurnal a
+            JOIN akun b ON a.no_coa = b.kodeAkun
+            WHERE b.kodeAkun = '$no_coa' 
+            AND LEFT(a.tgl_jurnal, 7) = '$periode'
+            ORDER BY tgl_jurnal ASC");
+            // print_r($query2);exit;
+    
+            $listBB = $query2->getResult();
+            $getSaldo = $query2->getRow()->saldo_awal ?? 0 ;
 
-        /** cek saldo awal berdasarkan no coa */
-        $saldoByCoa = $this->db->query("SELECT * FROM akun WHERE kodeAkun = '$no_coa'")->getRow()->saldo_awal;
-        $saldo_awal = $saldoByCoa + $pengurangan;
-        print_r($saldoByCoa);exit;
-
-        $query2 = $this->db->query("SELECT 
-        a.*, b.namaAkun, b.saldo_awal, b.header
-        FROM tb_jurnal a
-        JOIN akun b ON a.no_coa = b.kodeAkun
-        WHERE b.kodeAkun = '$no_coa' 
-        AND LEFT(a.tgl_jurnal, 7) = '$periode'
-        ORDER BY tgl_jurnal ASC");
-
-        $listBB = $query2->result();
-        $getSaldo = $query2->getRow()->saldo_awal ?? 0 ;
-
-        $data = [
-            'list' => $listBB,
-            'saldo_awal' => $saldo_awal,
-            'coa' => $akun,
-            'dataStockBahan' => $this->StockModel->getDataStockBahan(),
-            'title' => 'Home',
-            'tampil' => 'laporan/bukuBesar',
-            'dataJenisService' => $this->JenisServiceModel->get(),
-            'dataJenisTransaksiLainnya' => $this->JenisTransaksiLainnyaModel->get(),
-            'dataJenisBeban' => $this->JenisBebanModel->getDataJenisBeban(),
-            'dataStockBahan' => $this->StockModel->getDataStockBahan(),
-            'dataTransaksiAset' => $this->PembayaranAsetModel->get(),
-            'dataTransaksiAsetByFilter' => $this->PembayaranAsetModel->getTransaksiAsetByFilter($bulan, $tahun),
-            'dataKelolaAset' => $this->DataKelolaAsetModel->get(),
-            'all_data_aset' => $this->DataKelolaAsetModel->getDataTransaksiAset(),
-            'totalPembelianAset' => $this->DataKelolaAsetModel->getTotalPembelianAset(),
-        ];
-        return view('wrapp', $data);
+            $data = [
+                'per' => '',
+                'list' => $listBB,
+                'saldo_awal' => $saldo_awal,
+                'coa' => $akun,
+                'dataStockBahan' => $this->StockModel->getDataStockBahan(),
+                'title' => 'Home',
+                'tampil' => 'laporan/bukuBesar',
+                'dataJenisService' => $this->JenisServiceModel->get(),
+                'dataJenisTransaksiLainnya' => $this->JenisTransaksiLainnyaModel->get(),
+                'dataJenisBeban' => $this->JenisBebanModel->getDataJenisBeban(),
+                'dataStockBahan' => $this->StockModel->getDataStockBahan(),
+                'dataTransaksiAset' => $this->PembayaranAsetModel->get(),
+                'dataTransaksiAsetByFilter' => $this->PembayaranAsetModel->getTransaksiAsetByFilter($bulan, $tahun),
+                'dataKelolaAset' => $this->DataKelolaAsetModel->get(),
+                'all_data_aset' => $this->DataKelolaAsetModel->getDataTransaksiAset(),
+                'totalPembelianAset' => $this->DataKelolaAsetModel->getTotalPembelianAset(),
+            ];
+            return view('wrapp', $data);
+        }
     }
+
     public function labaRugi()
     {
         if ($this->request->getVar('bulan') == null && $this->request->getVar('tahun')) {
@@ -275,6 +388,7 @@ class Laporan extends BaseController
         ];
         return view('wrapp', $data);
     }
+
     public function neraca()
     {
         $data = [

@@ -121,7 +121,6 @@
         </form>
     </section>
 </div>
-<?= $this->include('transaksi/penjualan/bayar');?>
 <script src="<?= base_url('/js/vanilla-tilt.js'); ?>"></script>
 <script type="text/javascript">
     VanillaTilt.init(document.querySelectorAll(".info_card"), {

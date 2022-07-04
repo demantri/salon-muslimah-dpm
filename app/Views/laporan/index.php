@@ -17,14 +17,6 @@
         </div>
     </section>
     <section class="section" style="background-color: white; padding: 2rem; box-shadow: 1px 2px 3px 1px rgba(0,0,0,0.75); border-radius: 15px;">
-        <!-- <div class="row">
-            <div class="col-md-10">
-                <h2>Data Booking Service</h2>
-            </div>
-            <div class="col-md-2">
-                <a class="btn btn-info" href="/user/dashboard/service/pemesanan">Tambah Service</a>
-            </div>
-        </div> -->
         <div class="row" style="font-size: 20px;">
             <div class="col-md-6">
                 <h3>Jurnal Umum</h3>
@@ -72,7 +64,7 @@
                 <p>
                     Laporan ini menampilkan semua transaksi yang telah dilakukan untuk suatu periode. Laporan ini bermanfaat jika anda memerlukan daftar kronologis untuk semua transaksi yang telah dilakukan oleh perusahaan anda.
                 </p>
-                <a class="btn btn-secondary" href="/user/dashboard/laporan/buku-besar">Lihat Laporan</a>
+                <a class="btn btn-secondary" href="<?= base_url('/user/dashboard/laporan/arus-kas')?>">Lihat Laporan</a>
             </div>
         </div>
     </section>

@@ -543,6 +543,30 @@ class Transaksi extends BaseController
         echo json_encode($data);
     }
 
+    /** ambil stok */
+    public function saveStok()
+    {
+        $id_transaksi = $this->request->getVar('id_transaksi');
+        $karyawan = $this->request->getVar('karyawan'); 
+        $bahan = $this->request->getVar('bahan'); 
+        $qty = $this->request->getVar('qty');
+        
+        $data = [];
+        foreach ($bahan as $key => $value) {
+            $data[] = [
+                'id_transaksi' => $id_transaksi,
+                'id_karyawan' => $karyawan,
+                'id_bahan' => $bahan[$key],
+                'qty' => $qty[$key],
+            ];
+        }
+
+        $this->db->table('tb_stok')
+        ->insert($data);
+
+        return redirect()->to('user/transaksi/service');
+    }
+
     /** transaksi service */
     public function service()
     {
@@ -555,6 +579,9 @@ class Transaksi extends BaseController
         $kodeOtomatis = new KodeOtomatis();
         // $kode_bayar = $kodeOtomatis->id_bayar();
         $kode_bayar = $kodeOtomatis->generateRandomString();
+
+        $bahan = $this->db->query("select * from databahan")->getResult();
+        $karyawan = $this->db->query("select * from karyawan")->getResult();
         $data = [
             'model' => $model,
             'dataTransaksi' => $model->get(),
@@ -572,7 +599,9 @@ class Transaksi extends BaseController
             'dataJenisBeban' => $this->JenisBebanModel->getDataJenisBeban(),
             'tb_serivce' => $tb_serivce,
             'jenis_service' => $jenis_service,
-            'kode_bayar' => $kode_bayar
+            'kode_bayar' => $kode_bayar,
+            'bahan' => $bahan,
+            'karyawan' => $karyawan,
         ];
         return view('wrapp', $data);
     }
@@ -677,6 +706,10 @@ class Transaksi extends BaseController
         $this->db->table('tb_bayar')
         ->where('id_transaksi', $id_transaksi)
         ->update($data);
+
+        /** jurnal */
+        $this->jurnal->generateJurnal($id_transaksi, date('Y-m-d'), '111', 'Transaksi service', 'd', $total_transaksi);
+        $this->jurnal->generateJurnal($id_transaksi, date('Y-m-d'), '411', 'Transaksi service', 'k', $total_transaksi);
 
         return redirect()->to('user/transaksi/service');
     }

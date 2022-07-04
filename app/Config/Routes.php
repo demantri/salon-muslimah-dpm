@@ -88,6 +88,12 @@ $routes->group('/user/transaksi', static function($routes) {
     $routes->post('service/detail_service', 'Transaksi::detail_service', ['filter' => 'role:pemilik, admin2']);
     $routes->get('service/save', 'Transaksi::save_service', ['filter' => 'role:pemilik, admin2']);
 
+    /** service */
+    // $routes->get('service', 'Transaksi::service', ['filter' => 'role:pemilik, admin2']);
+    // $routes->get('service/form', 'Transaksi::form_service', ['filter' => 'role:pemilik, admin2']);
+    // $routes->post('service/detail_service', 'Transaksi::detail_service', ['filter' => 'role:pemilik, admin2']);
+    // $routes->get('service/save', 'Transaksi::save_service', ['filter' => 'role:pemilik, admin2']);
+
     /** pengeluaran aset */
     $routes->get('pengeluaranAset', 'Transaksi::pengeluaranAset', ['filter' => 'role:pemilik, admin2']);
     $routes->get('pengeluaranAset/form', 'Transaksi::form_pengeluaranAset', ['filter' => 'role:pemilik, admin2']);
@@ -125,6 +131,7 @@ $routes->get('/user/dashboard/laporan/jurnal-umum', 'Laporan::jurnalUmum', ['fil
 $routes->get('/user/dashboard/laporan/buku-besar', 'Laporan::bukuBesar', ['filter' => 'role:pemilik']);
 $routes->get('/user/dashboard/laporan/laba-rugi', 'Laporan::labaRugi', ['filter' => 'role:pemilik']);
 $routes->get('/user/dashboard/laporan/neraca', 'Laporan::neraca', ['filter' => 'role:pemilik']);
+$routes->get('/user/dashboard/laporan/arus-kas', 'Laporan::arus_kas', ['filter' => 'role:pemilik']);
 
 // Pencatatan Kas
 // Pemasukan

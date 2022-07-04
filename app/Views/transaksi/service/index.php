@@ -69,7 +69,7 @@
                                         # code...
                                         echo '<button type="button" class="btn btn-success btn-sm"> Sudah Bayar</button>';
                                     }
-                                    
+                                    echo ' <button type="button" class="btn btn-light btn-sm ambilstok" data-toggle="modal" data-target="#ambilstok" data-id="'.$item->id_transaksi.'">Pengambilan Stok</button>';
                                     ?>
                                 </td>
                             </tr>
@@ -82,6 +82,7 @@
     </section>
 </div>
 <?= $this->include('transaksi/service/bayar'); ?>
+<?= $this->include('transaksi/service/ambil_stok'); ?>
 <script src="<?= base_url('/js/vanilla-tilt.js'); ?>"></script>
 <script type="text/javascript">
     VanillaTilt.init(document.querySelectorAll(".info_card"), {
@@ -121,10 +122,41 @@
         });
     });
 
+    var i = 2;
+    $(".tambah").click(function() {
+        var data = `<tr>
+                        <td>
+                            <select name="bahan[]" id="bahan${i}" class="form-control">
+                                <option value="">-</option>
+                                <?php foreach ($bahan as $key => $value) { ?>
+                                <option value="<?= $value->id ?>"><?= $value->namaBarang ?></option>
+                                <?php } ?>
+                            </select>
+                        </td>
+                        <td>
+                            <input type="number" min="1" name="qty[]" id="qty${i}" class="form-control">
+                        </td>
+                        <td>
+                            <button type="button" class="hapus">Hapus</button>
+                        </td>
+                    </tr>`;
+        $('#stoktable').append(data);
+        i++;
+    });
+
+    $("#stoktable").on('click', '.hapus', function () {
+        $(this).closest('tr').remove();
+    });
+
     $(document).on("click", ".bayar", function () {
         var id = $(this).data('id');
         var total_transaksi = $(this).data('total-bayar');
         $(".modal-body #id_transaksi").val(id);
         $(".modal-body #total_transaksi").val(total_transaksi);
+    });
+
+    $(document).on("click", ".ambilstok", function () {
+        var id = $(this).data('id');
+        $(".modal-body #id_transaksi").val(id);
     });
 </script>

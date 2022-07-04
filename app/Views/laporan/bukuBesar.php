@@ -23,7 +23,7 @@
             <div class="col">
                 <div class="card" style="background-color: white; padding: 2rem; box-shadow: 1px 2px 3px 1px rgba(0,0,0,0.75); border-radius: 15px;">
                     <div class="card-body">
-                        <form action="/laporan/bukuBesar" method="post">
+                        <form action="<?= base_url('laporan/bukuBesar')?>" method="post">
                             <div class="form-group row">
                                 <label for="inputEmail3" class="col-sm-2 col-form-label">Periode</label>
                                 <div class="col-sm-2">
@@ -57,12 +57,9 @@
                                 <div class="col-sm-4">
                                     <select class="custom-select mr-sm-2" name="coa">
                                         <option class="text-center" value="">Pilih CoA</option>
-                                        <option class="text-center" value="kas">Kas</option>
-                                        <option class="text-center" value="aset">Aset</option>
-                                        <option class="text-center" value="Perlengkapan">Perlengkapan</option>
-                                        <option class="text-center" value="beban">Beban</option>
-                                        <option class="text-center" value="gaji">Gaji</option>
-                                        <option class="text-center" value="lainnya">Transaksi Lainnya</option>
+                                        <?php foreach ($coa as $key => $value) {
+                                            echo '<option class="text-center" value="'.$value->kodeAkun.'">'.$value->namaAkun.'</option>';
+                                        }?>
                                     </select>
                                 </div>
                             </div>
@@ -79,7 +76,7 @@
                 <h4 class="text-center">Salon Muslimah DPM</h4>
                 <h4 class="text-center">Buku Besar</h4>
                 <h4 class="text-center">
-                    Periode
+                    Periode <?= $per ?>
                 </h4>
             </div>
         </div>
@@ -97,47 +94,41 @@
                         </tr>
                     </thead>
                     <tbody>
-                    <tr>
-                        <td>0000-00-00</td>
-                        <td>Saldo Awal</td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td class="text-right"><?= number_format($saldo_awal) ?></td>
-                    </tr>
-                    <?php foreach ($list as $item) { ?>
                         <tr>
-                            <td><?= $item->tgl_jurnal ?></td>
-                            <td><?= $item->nama_coa ?></td>
-                            <td><?= $item->no_coa ?></td>
-                            <?php if ($item->posisi_dr_cr =='d') { ?>
-								<?php if ($item->header == 1 OR $item->header == 5 OR $item->header == 6 ) { ?>
-									<?php $saldo_awal = $saldo_awal + $item->nominal; ?>
-								<?php } else { ?>
-									<?php $saldo_awal = $saldo_awal - $item->nominal; ?>
-								<?php } ?>
-								<td class="text-right"><?= number_format($item->nominal)?></td>
-								<td></td>
-							<?php } else { ?>
-								<?php if ($item->header == 1 OR $item->header == 5 OR $item->header == 6 ) { ?>
-									<?php $saldo_awal = $saldo_awal - $item->nominal; ?>
-								<?php } else { ?>
-									<?php $saldo_awal = $saldo_awal + $item->nominal; ?>
-							<?php } ?>
-							<td></td>
-							<td class="text-right"><?= number_format($item->nominal)?></td>
-							<?php }?>
-							<td class="text-right"><?= number_format($saldo_awal)?></td>
+                            <td>0000-00-00</td>
+                            <td>Saldo Awal</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td class="text-right"><?= number_format($saldo_awal) ?></td>
                         </tr>
-                    <?php } ?>
+                        <?php foreach ($list as $item) { ?>
+                            <tr>
+                                <td><?= $item->tgl_jurnal ?></td>
+                                <td><?= $item->namaAkun ?></td>
+                                <td><?= $item->no_coa ?></td>
+                                <?php if ($item->posisi_d_c =='d') { ?>
+                                    <?php if ($item->header == 1 OR $item->header == 5 OR $item->header == 6 ) { ?>
+                                        <?php $saldo_awal = $saldo_awal + $item->nominal; ?>
+                                    <?php } else { ?>
+                                        <?php $saldo_awal = $saldo_awal - $item->nominal; ?>
+                                    <?php } ?>
+                                    <td class="text-right"><?= number_format($item->nominal)?></td>
+                                    <td></td>
+                                <?php } else { ?>
+                                    <?php if ($item->header == 1 OR $item->header == 5 OR $item->header == 6 ) { ?>
+                                        <?php $saldo_awal = $saldo_awal - $item->nominal; ?>
+                                    <?php } else { ?>
+                                        <?php $saldo_awal = $saldo_awal + $item->nominal; ?>
+                                <?php } ?>
+                                <td></td>
+                                <td class="text-right"><?= number_format($item->nominal)?></td>
+                                <?php }?>
+                                <td class="text-right"><?= number_format($saldo_awal)?></td>
+                            </tr>
+                        <?php } ?>
                     </tbody>
                 </table>
-
-                <!-- <script>
-                $(document).ready(function() {
-                    $('#tabelmenu').DataTable();
-                });
-            </script> -->
             </div>
         </div>
     </section>

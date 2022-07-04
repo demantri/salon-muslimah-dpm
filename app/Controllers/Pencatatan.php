@@ -31,7 +31,9 @@ use App\Models\GajiKaryawanModel;
 use App\Models\JenisServiceModel;
 use App\Models\JenisTransaksiLainnyaModel;
 use App\Models\JenisBebanModel;
+use App\Models\KodeOtomatis;
 use App\Models\UpahGajiModel;
+use App\Models\JurnalModel;
 
 class Pencatatan extends BaseController
 {
@@ -94,6 +96,7 @@ class Pencatatan extends BaseController
         $this->JenisTransaksiLainnyaModel = new JenisTransaksiLainnyaModel();
         $this->JenisBebanModel = new JenisBebanModel();
         $this->UpahGajiModel = new UpahGajiModel();
+        $this->jurnal = new JurnalModel();
     }
 
     public function index()
@@ -173,6 +176,9 @@ class Pencatatan extends BaseController
     public function dataBeban()
     {
         $model = new DataKelolaBebanModel;
+        $beban = $this->db->query("select * from akun where namaAkun like '%beban%'")->getResult();
+        $kd = new KodeOtomatis();
+        $kode = $kd->generateRandomString();
         $data = [
             'dataStockBahan' => $this->StockModel->getDataStockBahan(),
             'title' => 'Home',
@@ -181,6 +187,8 @@ class Pencatatan extends BaseController
             'dataJenisService' => $this->JenisServiceModel->get(),
             'dataJenisTransaksiLainnya' => $this->JenisTransaksiLainnyaModel->get(),
             'dataJenisBeban' => $this->JenisBebanModel->getDataJenisBeban(),
+            'beban' => $beban,
+            'kode' => $kode
         ];
         return view('wrapp', $data);
     }
@@ -217,10 +225,18 @@ class Pencatatan extends BaseController
             'totalBeban' => $this->request->getVar('totalBeban')
         ]);
 
+        // $split = explode('-', $this->request->getVar('akun'));
+        // print_r($split);exit;
+        // $no_akun = $split[0];
+
         // $this->AkunModel->save([
         //     'keterangan' => $this->request->getVar('keterangan'),
         //     'total' => $this->request->getVar('totalBeban')
         // ]);
+
+        // /** jurnal */
+        // $this->jurnal->generateJurnal($id, date('Y-m-d'), $no_akun, 'Transaksi service', 'd', $this->request->getVar('totalBeban'));
+        // $this->jurnal->generateJurnal($id, date('Y-m-d'), '411', 'Transaksi service', 'k', $this->request->getVar('totalBeban'));
 
         return redirect()->to('/user/dashboard/pencatatan-kas/pengeluaran/beban');
     }
@@ -272,8 +288,12 @@ class Pencatatan extends BaseController
             return redirect()->to('/user/dashboard/pencatatan-kas/pengeluaran/gaji');
         }
         $jenisBeban = $_POST['jenisBeban'];
+        $split = explode('-', $jenisBeban[0]);
+        $no_akun = $split[0];
         $akun = $_POST['akun'];
         $totalBeban = $_POST['totalBeban'];
+
+        // print_r($split);exit;
 
         $data = [];
 
@@ -284,17 +304,22 @@ class Pencatatan extends BaseController
                 'akun' => $akun,
                 'totalBeban' => $totalBeban[$index],
             ]);
-
-
             $index++;
         }
         $this->BebanModel->insertBatch($data);
+
 
         $this->DataKelolaBebanModel->save([
             'akun' => $this->request->getVar('akun'),
             'tanggalInputBeban' => $this->request->getVar('tanggalInputBeban')
         ]);
+
+        /** jurnal */
+        $this->jurnal->generateJurnal($akun, date('Y-m-d'), $no_akun, 'Transaksi Beban ', 'd', $totalBeban);
+        $this->jurnal->generateJurnal($akun, date('Y-m-d'), '111', 'Transaksi Beban ', 'k', $totalBeban);
+
         session()->setFlashData('pesan2', 'Data berhasil ditambahkan.');
+        
         return redirect()->to('/user/dashboard/pencatatan-kas/pengeluaran/beban');
     }
 

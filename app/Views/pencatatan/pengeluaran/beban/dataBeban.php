@@ -45,19 +45,14 @@ $akun = 'B210' . $totalField;
                 <form id="dataBeban" action="/Pencatatan/saveBeban" method="post">
                     <input type="hidden" id="jumlah-form" value="1">
                     <input type="hidden" id="akunBeban" name="keterangan" value="Beban">
-                    <!-- <input type="hidden" name="tanggalInputBeban" value="< date('Y-m-d'); ?>"> -->
-                    <!-- <input type="hidden" id="akun" name="akun" value="< $akun; ?>"> -->
                     <div class="col-md-8 text-center card" style="margin-left: auto; margin-right: auto; background-color: white; padding: 2rem; box-shadow: 1px 2px 3px 1px rgba(0,0,0,0.75); border-radius: 15px;">
                         <div class="card-header" style="background-color: #eaeaea;">
                             <h4 style="color: #6c757d;">Isi Form Dibawah Ini!</h4>
                         </div>
                         <div class="card-body">
-                            <!-- <h5 class="card-title">Special title treatment</h5>
-                            <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                            <a href="#" class="btn btn-primary">Go somewhere</a> -->
                             <div class="form-group">
                                 <label for="noTransaksi">No. Transaksi Beban</label>
-                                <input type="text" class="form-control text-center" name="akun" id="noTransaksi" value="<?= $akun; ?>" readonly>
+                                <input type="text" class="form-control text-center" name="akun" id="noTransaksi" value="<?= $kode; ?>" readonly>
                             </div>
                             <div class=" form-group">
                                 <label for="tanggalTransaksi">Tanggal Transaksi</label>
@@ -66,9 +61,9 @@ $akun = 'B210' . $totalField;
                             <div class="form-group">
                                 <label for="jenisBeban1">Nama Beban</label>
                                 <select class="custom-select mr-sm-2" id="jenisBeban1" name="jenisBeban[]">
-                                    <option class="text-center" value="" disabled selected>-Nama Beban-</option>
-                                    <?php foreach ($dataJenisBeban->getResult() as $row) : ?>
-                                        <option class="text-center" value="<?= $row->jenisBeban; ?>"><?= $row->jenisBeban; ?></option>
+                                    <option class="text-center" value="">-</option>
+                                    <?php foreach ($beban as $row) : ?>
+                                        <option class="text-center" value="<?= $row->kodeAkun .'-'.$row->namaAkun ?>"><?= $row->namaAkun; ?></option>
                                     <?php endforeach; ?>
                                 </select>
                             </div>
