@@ -132,6 +132,7 @@ $routes->get('/user/dashboard/laporan/buku-besar', 'Laporan::bukuBesar', ['filte
 $routes->get('/user/dashboard/laporan/laba-rugi', 'Laporan::labaRugi', ['filter' => 'role:pemilik']);
 $routes->get('/user/dashboard/laporan/neraca', 'Laporan::neraca', ['filter' => 'role:pemilik']);
 $routes->get('/user/dashboard/laporan/arus-kas', 'Laporan::arus_kas', ['filter' => 'role:pemilik']);
+$routes->get('/user/dashboard/laporan/stok', 'Laporan::laporan_stok', ['filter' => 'role:pemilik']);
 
 // Pencatatan Kas
 // Pemasukan

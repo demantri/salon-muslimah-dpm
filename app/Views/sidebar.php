@@ -153,18 +153,20 @@
                             </li>
                         <?php endif; ?> -->
                         <?php if (in_groups('pemilik')) : ?>
-                            <!-- <li class="nav-item dropdown" style="background-color: #6e60a3;">
-                                <a href="/user/dashboard/laporan" class="nav-link has-dropdown text-white" data-toggle="dropdown" style="background-color: #6e60a3;"><i class="fas fa-columns"></i> <span>Laporan Keuangan</span></a>
-                                <ul class="dropdown-menu" style="background-color: #6e60a3;">
-                                    <li><a class="nav-link text-white" href="#" style="background-color: #6e60a3;">Pengeluaran</a></li>
-                                    <li><a class="nav-link text-white" href="#" style="background-color: #6e60a3;">Pemasukkan</a></li>
-                                </ul>
-                            </li> -->
                             <li class="nav-item dropdown" style="background-color: #6e60a3;">
-                                <a class=" nav-link text-white" href="/user/dashboard/laporan" style="background-color: #6e60a3;">
-                                    <i class="fas fa-clipboard"></i>
-                                    <span>Laporan Keuangan</span>
-                                </a>
+                                <a href="#" class="nav-link has-dropdown text-white" data-toggle="dropdown" style="background-color: #6e60a3;"><i class="fas fa-clipboard"></i> <span>Laporan</span></a>
+                                <ul class="dropdown-menu" style="background-color: #6e60a3;">
+                                    <li class="nav-item dropdown" style="background-color: #6e60a3;">
+                                        <a class=" nav-link text-white" href="/user/dashboard/laporan" style="background-color: #6e60a3;">
+                                            <span>Laporan Keuangan</span>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item dropdown" style="background-color: #6e60a3;">
+                                        <a class=" nav-link text-white" href="/user/dashboard/laporan/stok" style="background-color: #6e60a3;">
+                                            <span>History Stok</span>
+                                        </a>
+                                    </li>
+                                </ul>
                             </li>
                         <?php endif; ?>
                         <!-- <li class="nav-item dropdown" style="background-color: #6e60a3;">

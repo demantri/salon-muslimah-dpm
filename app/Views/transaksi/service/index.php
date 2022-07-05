@@ -129,7 +129,7 @@
                             <select name="bahan[]" id="bahan${i}" class="form-control">
                                 <option value="">-</option>
                                 <?php foreach ($bahan as $key => $value) { ?>
-                                <option value="<?= $value->id ?>"><?= $value->namaBarang ?></option>
+                                <option value="<?= $value->id_product ?>"><?= $value->nama_product ?></option>
                                 <?php } ?>
                             </select>
                         </td>

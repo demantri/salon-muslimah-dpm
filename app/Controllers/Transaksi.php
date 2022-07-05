@@ -551,19 +551,26 @@ class Transaksi extends BaseController
         $bahan = $this->request->getVar('bahan'); 
         $qty = $this->request->getVar('qty');
         
-        $data = [];
+        // $data = [];
         foreach ($bahan as $key => $value) {
-            $data[] = [
+            $data = [
                 'id_transaksi' => $id_transaksi,
                 'id_karyawan' => $karyawan,
                 'id_bahan' => $bahan[$key],
                 'qty' => $qty[$key],
             ];
+            $this->db->table('tb_stok')
+            ->insert($data);
+
+            $last_stok = $this->db->query("select * from tb_product where id_product ='$value'")->getRow()->stok_akhir;
+            $data_update_stok = [
+                'stok_akhir' => $last_stok - $qty[$key],
+            ];
+    
+            $this->db->table('tb_product')
+            ->where('id_product', $value)
+            ->update($data_update_stok);
         }
-
-        $this->db->table('tb_stok')
-        ->insert($data);
-
         return redirect()->to('user/transaksi/service');
     }
 
@@ -580,7 +587,11 @@ class Transaksi extends BaseController
         // $kode_bayar = $kodeOtomatis->id_bayar();
         $kode_bayar = $kodeOtomatis->generateRandomString();
 
-        $bahan = $this->db->query("select * from databahan")->getResult();
+        // $bahan = $this->db->query("select * from databahan")->getResult();
+
+        /** tb_produk yg kategori 1 */
+        $bahan = $this->db->query("select * from tb_product where id_kategori = '1'")->getResult();
+
         $karyawan = $this->db->query("select * from karyawan")->getResult();
         $data = [
             'model' => $model,

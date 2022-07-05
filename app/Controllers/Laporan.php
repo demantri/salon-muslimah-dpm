@@ -86,51 +86,137 @@ class Laporan extends BaseController
 
     public function arus_kas()
     {
-        $pnd = $this->db->query("SELECT a.*, b.namaAkun, b.posisi_d_c AS saldo_normal, b.is_arus_kas, SUM(nominal) AS total
-        FROM tb_jurnal a 
-        JOIN akun b ON a.no_coa = b.kodeAkun
-        WHERE b.is_arus_kas = 1 
-        AND b.namaAkun LIKE '%pendapatan jasa%'
-        GROUP BY no_coa");
+        $bulan = $this->request->getVar('bulan');
+        $tahun = $this->request->getVar('tahun');
+        $periode = $tahun.'-'.$bulan;
+        if (isset($periode)) {
+            # code...
+            $pnd = $this->db->query("SELECT a.*, b.namaAkun, b.posisi_d_c AS saldo_normal, b.is_arus_kas, SUM(nominal) AS total
+            FROM tb_jurnal a 
+            JOIN akun b ON a.no_coa = b.kodeAkun
+            WHERE b.is_arus_kas = 1 
+            AND b.namaAkun LIKE '%pendapatan jasa%'
+            AND left(tgl_jurnal, 7) = '$periode'
+            GROUP BY no_coa");
+    
+            $beban1 = $this->db->query("SELECT a.*, b.namaAkun, b.posisi_d_c AS saldo_normal, b.is_arus_kas, SUM(nominal) AS total
+            FROM tb_jurnal a 
+            JOIN akun b ON a.no_coa = b.kodeAkun
+            WHERE b.is_arus_kas = 1
+            and b.namaAkun like '%beban%'
+            AND left(tgl_jurnal, 7) = '$periode'
+            GROUP BY no_coa");
+    
+            $pmb = $this->db->query("SELECT a.*, b.namaAkun, b.posisi_d_c AS saldo_normal, b.is_arus_kas, SUM(nominal) AS total
+            FROM tb_jurnal a 
+            JOIN akun b ON a.no_coa = b.kodeAkun
+            WHERE b.is_arus_kas = 2
+            and b.namaAkun like '%pembelian%'
+            AND left(tgl_jurnal, 7) = '$periode'
+            GROUP BY no_coa");
+    
+            $privee = $this->db->query("SELECT a.*, b.namaAkun, b.posisi_d_c AS saldo_normal, b.is_arus_kas, SUM(nominal) AS total
+            FROM tb_jurnal a 
+            JOIN akun b ON a.no_coa = b.kodeAkun
+            WHERE b.is_arus_kas = 3
+            AND left(tgl_jurnal, 7) = '$periode'
+            GROUP BY no_coa");
+    
+            $pendapatan_jasa = $pnd->getRow()->total ?? 0;
+            $beban = $beban1->getResult();
+            $pembelian = $pmb->getResult();
+            $prive = $privee->getResult();
+    
+            $data = [
+                'dataStockBahan' => $this->StockModel->getDataStockBahan(),
+                'title' => 'Home',
+                'tampil' => 'laporan/arus_kas',
+                'dataJenisService' => $this->JenisServiceModel->get(),
+                'dataJenisTransaksiLainnya' => $this->JenisTransaksiLainnyaModel->get(),
+                'dataJenisBeban' => $this->JenisBebanModel->getDataJenisBeban(),
+                'pendapatan_jasa' => $pendapatan_jasa,
+                'beban' => $beban,
+                'pembelian' => $pembelian,
+                'prive' => $prive,
+            ];
+            return view('wrapp', $data);
+        } else {
+            $pnd = $this->db->query("SELECT a.*, b.namaAkun, b.posisi_d_c AS saldo_normal, b.is_arus_kas, SUM(nominal) AS total
+            FROM tb_jurnal a 
+            JOIN akun b ON a.no_coa = b.kodeAkun
+            WHERE b.is_arus_kas = 1 
+            AND b.namaAkun LIKE '%pendapatan jasa%'
+            AND left(tgl_jurnal, 7) = '$periode'
+            GROUP BY no_coa");
+    
+            $beban1 = $this->db->query("SELECT a.*, b.namaAkun, b.posisi_d_c AS saldo_normal, b.is_arus_kas, SUM(nominal) AS total
+            FROM tb_jurnal a 
+            JOIN akun b ON a.no_coa = b.kodeAkun
+            WHERE b.is_arus_kas = 1
+            and b.namaAkun like '%beban%'
+            AND left(tgl_jurnal, 7) = '$periode'
+            GROUP BY no_coa");
+    
+            $pmb = $this->db->query("SELECT a.*, b.namaAkun, b.posisi_d_c AS saldo_normal, b.is_arus_kas, SUM(nominal) AS total
+            FROM tb_jurnal a 
+            JOIN akun b ON a.no_coa = b.kodeAkun
+            WHERE b.is_arus_kas = 2
+            and b.namaAkun like '%pembelian%'
+            AND left(tgl_jurnal, 7) = '$periode'
+            GROUP BY no_coa");
+    
+            $privee = $this->db->query("SELECT a.*, b.namaAkun, b.posisi_d_c AS saldo_normal, b.is_arus_kas, SUM(nominal) AS total
+            FROM tb_jurnal a 
+            JOIN akun b ON a.no_coa = b.kodeAkun
+            WHERE b.is_arus_kas = 3
+            AND left(tgl_jurnal, 7) = '$periode'
+            GROUP BY no_coa");
+    
+            $pendapatan_jasa = $pnd->getRow()->total ?? 0;
+            $beban = $beban1->getResult();
+            $pembelian = $pmb->getResult();
+            $prive = $privee->getResult();
+    
+            $data = [
+                'dataStockBahan' => $this->StockModel->getDataStockBahan(),
+                'title' => 'Home',
+                'tampil' => 'laporan/arus_kas',
+                'dataJenisService' => $this->JenisServiceModel->get(),
+                'dataJenisTransaksiLainnya' => $this->JenisTransaksiLainnyaModel->get(),
+                'dataJenisBeban' => $this->JenisBebanModel->getDataJenisBeban(),
+                'pendapatan_jasa' => $pendapatan_jasa,
+                'beban' => $beban,
+                'pembelian' => $pembelian,
+                'prive' => $prive,
+            ];
+            return view('wrapp', $data);
+        }
+    }
 
-        $beban1 = $this->db->query("SELECT a.*, b.namaAkun, b.posisi_d_c AS saldo_normal, b.is_arus_kas, SUM(nominal) AS total
-        FROM tb_jurnal a 
-        JOIN akun b ON a.no_coa = b.kodeAkun
-        WHERE b.is_arus_kas = 1
-        and b.namaAkun like '%beban%'
-        GROUP BY no_coa");
+    public function laporan_stok()
+    {
+        $bulan = $this->request->getVar('bulan');
+        $tahun = $this->request->getVar('tahun');
+        $periode = $tahun.'-'.$bulan;
 
-        $pmb = $this->db->query("SELECT a.*, b.namaAkun, b.posisi_d_c AS saldo_normal, b.is_arus_kas, SUM(nominal) AS total
-        FROM tb_jurnal a 
-        JOIN akun b ON a.no_coa = b.kodeAkun
-        WHERE b.is_arus_kas = 2
-        and b.namaAkun like '%pembelian%'
-        GROUP BY no_coa");
-
-        $privee = $this->db->query("SELECT a.*, b.namaAkun, b.posisi_d_c AS saldo_normal, b.is_arus_kas, SUM(nominal) AS total
-        FROM tb_jurnal a 
-        JOIN akun b ON a.no_coa = b.kodeAkun
-        WHERE b.is_arus_kas = 3
-        GROUP BY no_coa");
-
-        $pendapatan_jasa = $pnd->getRow()->total;
-        $beban = $beban1->getResult();
-        $pembelian = $pmb->getResult();
-        $prive = $privee->getResult();
-
-        $data = [
-            'dataStockBahan' => $this->StockModel->getDataStockBahan(),
-            'title' => 'Home',
-            'tampil' => 'laporan/arus_kas',
-            'dataJenisService' => $this->JenisServiceModel->get(),
-            'dataJenisTransaksiLainnya' => $this->JenisTransaksiLainnyaModel->get(),
-            'dataJenisBeban' => $this->JenisBebanModel->getDataJenisBeban(),
-            'pendapatan_jasa' => $pendapatan_jasa,
-            'beban' => $beban,
-            'pembelian' => $pembelian,
-            'prive' => $prive,
-        ];
-        return view('wrapp', $data);
+        if (isset($periode)) {
+            $stok = $this->db->query("SELECT a.*, b.namaKaryawan, c.nama_product, c.stok_akhir
+            FROM tb_stok a
+            JOIN karyawan b ON a.id_karyawan = b.idKaryawan
+            JOIN tb_product c ON a.id_bahan = c.id_product
+            WHERE left(date_create, 7) = '$periode'
+            ")->getResult();
+            $data = [
+                'dataStockBahan' => $this->StockModel->getDataStockBahan(),
+                'title' => 'Home',
+                'tampil' => 'laporan/stok',
+                'dataJenisService' => $this->JenisServiceModel->get(),
+                'dataJenisTransaksiLainnya' => $this->JenisTransaksiLainnyaModel->get(),
+                'dataJenisBeban' => $this->JenisBebanModel->getDataJenisBeban(),
+                'stok' => $stok
+            ];
+            return view('wrapp', $data);
+        }
     }
 
     public function jurnalUmum()

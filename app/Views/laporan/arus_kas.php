@@ -124,7 +124,7 @@
                         <?php $total_invest += $value->total ?>
                         <tr>
                             <td> <?= $value->namaAkun?></td>
-                            <td class="text-right"><?= number_format($value->total) ?></td>
+                            <td class="text-right"><?= number_format($total_invest) ?></td>
                             <td></td>
                         </tr>
                         <?php } ?>
@@ -162,7 +162,7 @@
                         <tr style="font-weight:bold">
                             <td> Total arus kas</td>
                             <td></td>
-                            <td class="text-right"><?= number_format($aruskasbersihdariaktivitasusaha + $aruskasbersih)?></td>
+                            <td class="text-right"><?= number_format(($aruskasbersihdariaktivitasusaha - $total_invest) + $aruskasbersih)?></td>
                         </tr>
                     </thead>
                 </table>
