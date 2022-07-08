@@ -54,10 +54,17 @@
                                 <td><?= $row->id_aset?></td>
                                 <td><?= $row->nama?></td>
                                 <td><?= $row->jenis_aset?></td>
-                                <td><?= $row->harga?></td>
+                                <td class="text-right"><?= number_format($row->harga)?></td>
                                 <td><?= $row->satuan?></td>
                                 <td>
-                                    <button> Edit</button>
+                                    <button type="button" class="btn btn-warning edit" 
+                                    data-toggle="modal"
+                                    data-target="#edit"
+                                    data-id="<?= $row->id_aset?>"
+                                    data-nama="<?= $row->nama?>"
+                                    data-jenis="<?= $row->jenis_aset?>"
+                                    data-harga="<?= $row->harga?>"
+                                    data-satuan="<?= $row->satuan?>"> Edit</button>
                                 </td>
                             </tr>
                         <?php } ?>
@@ -69,6 +76,7 @@
     </section>
 </div>
 <?= $this->include('masterdata/aset/add'); ?>
+<?= $this->include('masterdata/aset/edit'); ?>
 <script src="<?= base_url('/js/vanilla-tilt.js'); ?>"></script>
 <script type="text/javascript">
     VanillaTilt.init(document.querySelectorAll(".info_card"), {
@@ -84,9 +92,16 @@
     });
 
     $(document).on("click", ".edit", function () {
-     var id = $(this).data('id');
-     var keterangan = $(this).data('keterangan');
-     $(".modal-body #id").val( id );
-     $(".modal-body #keterangan").val( keterangan );
-});
+        var id = $(this).data('id');
+        var nama = $(this).data('nama');
+        var jenis = $(this).data('jenis');
+        var harga = $(this).data('harga');
+        var satuan = $(this).data('satuan');
+
+        $(".modal-body #id_aset_edit").val( id );
+        $(".modal-body #nama_aset_edit").val( nama );
+        $(".modal-body #jenis_aset_edit").val( jenis );
+        $(".modal-body #harga_edit").val( harga );
+        $(".modal-body #satuan_edit").val( satuan );
+    });
 </script>

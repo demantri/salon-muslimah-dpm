@@ -59,8 +59,19 @@
                                 <td><?= $item->min_stok ?></td>
                                 <td><?= ($item->status == 1) ? '<span class="badge badge-success">Aktif</span>' : '<span class="badge badge-danger">Tidak Aktif</span>'?></td>
                                 <td>
-                                    <button class="btn btn-warning">Edit</button>
-                                    <button class="btn btn-outline-warning">Ubah Status</button>
+                                    <button type="button" 
+                                    class="btn btn-warning edit" 
+                                    data-toggle="modal" 
+                                    data-target="#edit"
+                                    data-id="<?= $item->id_product?>"
+                                    data-nama_product="<?= $item->nama_product?>"
+                                    data-kategori="<?= $item->kategori?>"
+                                    data-stok_akhir="<?= $item->stok_akhir?>"
+                                    data-min_stok="<?= $item->min_stok?>"
+                                    data-status="<?= $item->status?>"
+                                    data-harga_satuan="<?= $item->harga_satuan?>"
+                                    >Edit</button>
+                                    <!-- <button class="btn btn-outline-warning">Ubah Status</button> -->
                                 </td>
                             </tr>
                         <?php } ?>
@@ -88,9 +99,19 @@
     });
 
     $(document).on("click", ".edit", function () {
-     var id = $(this).data('id');
-     var keterangan = $(this).data('keterangan');
-     $(".modal-body #id").val( id );
-     $(".modal-body #keterangan").val( keterangan );
-});
+        var id = $(this).data('id');
+        var nama_product = $(this).data('nama_product');
+        var kategori = $(this).data('kategori');
+        var harga_satuan = $(this).data('harga_satuan');
+        var stok_akhir = $(this).data('stok_akhir');
+        var min_stok = $(this).data('min_stok');
+        var status = $(this).data('status');
+        $(".modal-body #id_product_edit").val( id );
+        $(".modal-body #nama_product_edit").val( nama_product );
+        $(".modal-body #harga_satuan_edit").val( harga_satuan );
+        $(".modal-body #kategori_edit").val( kategori );
+        $(".modal-body #stok_akhir_edit").val( stok_akhir );
+        $(".modal-body #min_stok_edit").val( min_stok );
+        $(".modal-body #status").val( status );
+    });
 </script>

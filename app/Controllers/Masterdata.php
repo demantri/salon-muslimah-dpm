@@ -134,17 +134,19 @@ class Masterdata extends BaseController
     public function jabatanEdit()
     {
         $id = $this->request->getVar('id');
-        $keterangan = $this->request->getVar('keterangan');
+        $deskripsi_edit = $this->request->getVar('deskripsi');
+        $gapok_edit = $this->request->getVar('gapok');
 
         $data = [
-            'keterangan' => $keterangan
+            'deskripsi' => $deskripsi_edit,
+            'gapok' => $gapok_edit
         ];
 
-        $this->db->table('tb_satuan')
+        $this->db->table('tb_jabatan')
         ->where('id', $id)
         ->update($data);
 
-        return redirect()->to('/user/dashboard/masterdata/satuan');
+        return redirect()->to('user/dashboard/masterdata/jabatan');
     }
 
     /** jenis service */
@@ -218,6 +220,8 @@ class Masterdata extends BaseController
 
         $this->db->table('tb_pelanggan')
         ->insert($data);
+
+        session()->setFlashdata("success", "Data berhasil di simpan.");
 
         return redirect()->to('/user/dashboard/masterdata/pelanggan');
     }
@@ -301,22 +305,25 @@ class Masterdata extends BaseController
 
     public function asetEdit()
     {
-        $id_pelanggan = $this->request->getVar('id_pelanggan');
-        $nama_pelanggan = $this->request->getVar('nama_pelanggan');
-        $alamat_domisili = $this->request->getVar('alamat_domisili');
-        $no_telp = $this->request->getVar('no_telp');
+        $id_aset = $this->request->getVar('id_aset');
+        $nama_aset = $this->request->getVar('nama_aset');
+        $jenis_aset = $this->request->getVar('jenis_aset');
+        $harga_aset = $this->request->getVar('harga_aset');
+        $satuan = $this->request->getVar('satuan');
 
         $data = [
-            'nama' => $nama_pelanggan,
-            'alamat' => $alamat_domisili,
-            'no_telp' => $no_telp,
+            'nama' => $nama_aset,
+            'jenis_aset' => $jenis_aset,
+            'harga' => $harga_aset,
+            'satuan' => $satuan,
         ];
+        // print_r($data);
 
-        $this->db->table('tb_pelanggan')
-        ->where('id_pelanggan', $id_pelanggan)
+        $this->db->table('tb_aset')
+        ->where('id_aset', $id_aset)
         ->update($data);
 
-        return redirect()->to('/user/dashboard/masterdata/pelanggan');
+        return redirect()->to('/user/dashboard/masterdata/aset');
     }
 
     /** kategori */
@@ -424,22 +431,34 @@ class Masterdata extends BaseController
         $this->db->table('tb_product')
         ->insert($data);
 
+        session()->setFlashdata("pesan", "Data berhasil di simpan.");
+
         return redirect()->to('/user/dashboard/masterdata/product');
     }
 
     public function productEdit()
     {
-        $id = $this->request->getVar('id');
-        $keterangan = $this->request->getVar('keterangan');
+        $id_product = $this->request->getVar('id_product');
+        $nama_product = $this->request->getVar('nama_product');
+        $harga_satuan = $this->request->getVar('harga_satuan');
+        $kategori = $this->request->getVar('kategori');
+        $stok_akhir = $this->request->getVar('stok_akhir');
+        $min_stok = $this->request->getVar('min_stok');
+        $status = $this->request->getVar('status');
 
         $data = [
-            'keterangan' => $keterangan
+            'nama_product' => $nama_product,
+            'id_kategori' => $kategori,
+            'harga_satuan' => $harga_satuan,
+            'stok_akhir' => $stok_akhir,
+            'min_stok' => $min_stok,
+            'status' => $status,
         ];
 
-        $this->db->table('tb_kategori')
-        ->where('id', $id)
+        $this->db->table('tb_product')
+        ->where('id_product', $id_product)
         ->update($data);
 
-        return redirect()->to('/user/dashboard/masterdata/kategori');
+        return redirect()->to('/user/dashboard/masterdata/product');
     }
 }

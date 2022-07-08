@@ -35,8 +35,22 @@ class Penggajian extends BaseController
         $model = new DataKelolaAdminModel;
         $kode_otomatis = new KodeOtomatis();
         $kode = $kode_otomatis->id_gaji();
-        $pegawai = $this->db->query("SELECT * FROM karyawan 
+        // $pegawai = $this->db->query("SELECT * FROM karyawan 
+        // WHERE left(tanggalPembayaranGaji,7) <> LEFT(SYSDATE(), 7) OR tanggalPembayaranGaji IS NULL")->getResult();
+
+        $pegawai = $this->db->query("SELECT a.*, total_hadir
+        FROM karyawan a
+        LEFT JOIN (
+            SELECT COUNT(a.idKaryawan) AS total_hadir, a.idKaryawan
+            FROM waktuabsensi a
+            LEFT JOIN karyawan b ON a.idKaryawan = b.idKaryawan
+            WHERE keterangan = 'hadir'
+            AND LEFT(a.tanggalAbsen, 7) = LEFT(SYSDATE(), 7)
+            GROUP BY a.idKaryawan
+        ) b ON a.idKaryawan = b.idKaryawan
         WHERE left(tanggalPembayaranGaji,7) <> LEFT(SYSDATE(), 7) OR tanggalPembayaranGaji IS NULL")->getResult();
+
+        $list = $this->db->query("SELECT a.*, b.namaKaryawan FROM tb_penggajian a JOIN karyawan b ON a.id_pegawai = b.idKaryawan")->getResult();
         $data = [
             'model' => $model,
             'dataTransaksi' => $model->get(),
@@ -54,6 +68,7 @@ class Penggajian extends BaseController
             'dataJenisBeban' => $this->JenisBebanModel->getDataJenisBeban(),
             'pegawai' => $pegawai,
             'kode' => $kode,
+            'list' => $list,
         ];
         return view('wrapp', $data);
     }
@@ -71,16 +86,25 @@ class Penggajian extends BaseController
         b.gapok, 
         c.jumlah_service,
         c.tgl_transaksi,
-        c.total_transaksi_per_pegawai
+        c.total_transaksi_per_pegawai,
+        x.total_hadir
         FROM karyawan a 
         LEFT JOIN tb_jabatan b ON a.kode_jabatan = b.id
         LEFT JOIN
         (
-            SELECT COUNT(kode_karyawan) AS jumlah_service, kode_karyawan, tgl_transaksi, SUM(subtotal) AS total_transaksi_per_pegawai
-            FROM tb_transaksi_service
-            WHERE LEFT(tgl_transaksi, 7) = '2022-06'
-            GROUP BY kode_karyawan
+           SELECT COUNT(kode_karyawan) AS jumlah_service, kode_karyawan, tgl_transaksi, SUM(subtotal) AS total_transaksi_per_pegawai
+           FROM tb_transaksi_service
+           WHERE LEFT(tgl_transaksi, 7) = '2022-07'
+           GROUP BY kode_karyawan
         ) as c ON c.kode_karyawan = a.idKaryawan
+        LEFT JOIN (
+            SELECT COUNT(a.idKaryawan) AS total_hadir, a.idKaryawan
+            FROM waktuabsensi a
+            LEFT JOIN karyawan b ON a.idKaryawan = b.idKaryawan
+            WHERE keterangan = 'hadir'
+            AND LEFT(a.tanggalAbsen, 7) = LEFT(SYSDATE(), 7)
+            GROUP BY a.idKaryawan
+        ) x ON a.idKaryawan = x.idKaryawan
         WHERE a.idKaryawan = '$kode'
         GROUP BY a.idKaryawan
         ";
@@ -96,10 +120,14 @@ class Penggajian extends BaseController
         $pegawai = $this->request->getVar('pegawai'); 
         $gapok = $this->request->getVar('gapok'); 
         $bonus = $this->request->getVar('bonus'); 
-        $jml_service = $this->request->getVar('jml_service'); 
+        // $jml_service = $this->request->getVar('jml_service'); 
         $total_transaksi_service = $this->request->getVar('total_transaksi_service'); 
         $bonus_service = $this->request->getVar('bonus_service'); 
         $gaji_bersih = $this->request->getVar('gaji_bersih');
+
+        $jml_hadir = $this->request->getVar('total_hadir');
+        $bonus_hadir = $this->request->getVar('biaya');
+        $total_bonus_hadir = $this->request->getVar('tot_bonus_hadir');
 
         $data = [
             'id_gaji' => $id_gaji,
@@ -109,8 +137,11 @@ class Penggajian extends BaseController
             'total_service' => $total_transaksi_service,
             'gajipokok' => $gapok,
             'persentase_bonus' => $bonus,
-            'jml_service' => $jml_service,
+            // 'jml_service' => $jml_service,
             'bonus_service' => $bonus_service,
+            'jml_hadir' => $jml_hadir,
+            'bonus_hadir' => $bonus_hadir,
+            'total_bonus_hadir' => $total_bonus_hadir,
             'gaji_bersih' => $gaji_bersih,
         ];
         $this->db->table("tb_penggajian")->insert($data);

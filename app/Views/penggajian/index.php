@@ -39,16 +39,30 @@
                                 <th class="text-center">No</th>
                                 <th class="text-center">ID Penggajian</th>
                                 <th class="text-center">Tgl. Penggajian</th>
-                                <th class="text-center">Nama Pegawai</th>
+                                <th class="text-center">Nama Karyawan</th>
+                                <th class="text-center">Total Kehadiran</th>
                                 <th class="text-center">Gaji Pokok</th>
                                 <th class="text-center">Bonus Service</th>
                                 <th class="text-center">Total Service</th>
                                 <th class="text-center">Gaji Bersih</th>
-                                <th class="text-center">Action</th>
                             </tr>
                         </thead>
                         <tbody>
-                        
+                        <?php 
+                        $no = 1;
+                        foreach ($list as $row) { ?>
+                            <tr>
+                                <td><?= $no++ ?></td>
+                                <td><?= $row->id_gaji?></td>
+                                <td><?= $row->tgl_gaji?></td>
+                                <td><?= $row->namaKaryawan?></td>
+                                <td><?= $row->jml_hadir?></td>
+                                <td class="text-right"><?= number_format($row->gajipokok)?></td>
+                                <td class="text-right"><?= number_format($row->bonus_service)?></td>
+                                <td class="text-right"><?= number_format($row->total_service)?></td>
+                                <td class="text-right"><?= number_format($row->gaji_bersih)?></td>
+                            </tr>
+                        <?php } ?>
                         </tbody>
                     </table>
                 </div>
@@ -92,9 +106,11 @@
                         $(".div_detail").css("display", "block");
 
                         var obj = JSON.parse(response);
-                        console.log(obj);
-                        var bonus_service = parseInt(10/100) * obj.total_transaksi_per_pegawai
-                        // console.log(obj);
+
+                        var bonus_service = parseInt(10/100) * obj.total_transaksi_per_pegawai;
+
+                        var biaya = $("#biaya").val();
+                        var tot_bonus = obj.total_hadir * biaya;
 
                         $("#bonus").on("keyup", function() {
                             var typing = $(this).val();
@@ -103,19 +119,31 @@
                                 var tot_bonus = bonus * obj.total_transaksi_per_pegawai
                                 $("#bonus_service").val(tot_bonus);
 
-                                var gaji_bersih = parseInt(obj.gapok) + tot_bonus;
+                                var tot_bonus_kehadiran = parseInt($("#tot_bonus_hadir").val());
+
+
+                                var gaji_bersih = parseInt(obj.gapok) + parseInt(tot_bonus) + parseInt(tot_bonus_kehadiran);
                                 $("#gaji_bersih").val(gaji_bersih);
                             } else {
+                                var tot_bonus_kehadiran = parseInt($("#tot_bonus_hadir").val());
+                                var gapok = parseInt(obj.gapok);
+                                var gajibersih = gapok + tot_bonus_kehadiran;
+                                
                                 $("#bonus_service").val(0);
-                                $("#gaji_bersih").val(obj.gapok);
+                                $("#gaji_bersih").val(gajibersih);
                             }
                         });
-
+                        
                         $("#gapok").val(obj.gapok);
-                        $("#jml_service").val(obj.jumlah_service);
+                        // $("#jml_service").val(obj.jumlah_service);
                         $("#total_transaksi_service").val(obj.total_transaksi_per_pegawai);
                         $("#bonus_service").val(0);
-                        $("#gaji_bersih").val(obj.gapok);
+                        $("#total_hadir").val(obj.total_hadir);
+                        $("#tot_bonus_hadir").val(tot_bonus);
+
+                        var gapok = $("#gapok").val();
+                        var gajibersih = parseInt(gapok) + parseInt(tot_bonus);
+                        $("#gaji_bersih").val(gajibersih);
 
                         $("#btn-simpan").prop("disabled", false);
                     }

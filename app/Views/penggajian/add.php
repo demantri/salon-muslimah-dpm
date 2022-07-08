@@ -39,6 +39,7 @@
                     </div>
 
                     <div class="div_detail" style="display: none;">
+
                         <div class="form-group row">
                             <label for="gapok" class="col-sm-4 col-form-label">Gaji Pokok</label>
                             <div class="col-sm-8">
@@ -48,15 +49,15 @@
 
                         <div class="form-group row">
                             <label for="detail_service" class="col-sm-4 col-form-label">Detail Service</label>
-                            <div class="col-sm-3">
+                            <div class="col-sm-4">
                                 <input type="" id="bonus" name="bonus" class="form-control" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');">
                                 <i style="font-size: small;">bonus (%)</i>
                             </div>
-                            <div class="col-sm-2">
+                            <!-- <div class="col-sm-2">
                                 <input type="text" id="jml_service" name="jml_service" class="form-control" readonly>
                                 <i style="font-size: small;">jumlah service</i>
-                            </div>
-                            <div class="col-sm-3">
+                            </div> -->
+                            <div class="col-sm-4">
                                 <input type="text" id="total_transaksi_service" name="total_transaksi_service" class="form-control" readonly>
                                 <i style="font-size: small;">total transaksi service</i>
                             </div>
@@ -73,10 +74,32 @@
                         <hr>
 
                         <div class="form-group row">
+                            <label for="total_hadir" class="col-sm-4 col-form-label">Detail Kehadiran</label>
+                            <div class="col-sm-4">
+                                <input type="text" id="total_hadir" name="total_hadir" class="form-control" readonly>
+                                <i style="font-size: small;">total kehadiran</i>
+                            </div>
+                            <div class="col-sm-4">
+                                <input type="text" id="biaya" name="biaya" class="form-control" value="5000" readonly>
+                                <i style="font-size: small;">bonus kehadiran perhari</i>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="tot_bonus_hadir" class="col-sm-4 col-form-label">Bonus Hadir</label>
+                            <div class="col-sm-8">
+                                <input type="text" id="tot_bonus_hadir" name="tot_bonus_hadir" class="form-control" readonly>
+                                <i style="font-size: small;">Note: bonus didapatkan total hadir * bonus kehadiran perhari.</i>
+                            </div>
+                        </div>
+
+                        <hr>
+
+                        <div class="form-group row">
                             <label for="gaji_bersih" class="col-sm-4 col-form-label">Gaji Bersih</label>
                             <div class="col-sm-8">
                                 <input type="text" id="gaji_bersih" name="gaji_bersih" class="form-control" readonly>
-                                <i><strong>gaji bersih = gapok + bonus </strong></i>
+                                <i><strong>gaji bersih = gapok + bonus service + (jml hadir * 5000) </strong></i>
                             </div>
                         </div>
                     </div>

@@ -51,7 +51,12 @@
                                 <td><?= $row->deskripsi ?></td>
                                 <td class="text-right"><?= $row->gapok ?></td>
                                 <td>
-                                    <button> Edit</button>
+                                    <button class="btn btn-warning edit" type="button" 
+                                    data-toggle="modal"
+                                    data-target="#edit"
+                                    data-id="<?= $row->id?>"
+                                    data-gapok="<?= $row->gapok?>"
+                                    data-desc="<?= $row->deskripsi?>"> Edit</button>
                                 </td>
                             </tr>
                         <?php } ?>
@@ -63,6 +68,7 @@
     </section>
 </div>
 <?= $this->include('masterdata/jabatan/add');?>
+<?= $this->include('masterdata/jabatan/edit');?>
 <script src="<?= base_url('/js/vanilla-tilt.js'); ?>"></script>
 <script type="text/javascript">
     VanillaTilt.init(document.querySelectorAll(".info_card"), {
@@ -78,9 +84,12 @@
     });
 
     $(document).on("click", ".edit", function () {
-     var id = $(this).data('id');
-     var keterangan = $(this).data('keterangan');
-     $(".modal-body #id").val( id );
-     $(".modal-body #keterangan").val( keterangan );
-});
+        var id = $(this).data('id');
+        var gapok = $(this).data('gapok');
+        var desc = $(this).data('desc');
+
+        $(".modal-body #id").val( id );
+        $(".modal-body #deskripsi_edit").val( desc );
+        $(".modal-body #gapok_edit").val( gapok );
+    });
 </script>
